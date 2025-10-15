@@ -121,8 +121,6 @@
     </div>
 
     <div class="row justify-end q-gutter-md q-pa-sm">
-      <q-btn rounded type="reset" label="Limpiar" text-color="black" />
-
       <q-spinner-puff color="primary" size="2em" v-if="loading" />
       <q-btn
         rounded

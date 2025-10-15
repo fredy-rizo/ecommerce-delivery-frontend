@@ -1,55 +1,62 @@
 <template>
-  <q-page>
-    <div>
-      <q-card
-        class="row q-pa-md justify-center"
-        v-if="dataUser.roles.find((itm) => itm.value == 2)"
-      >
-        <q-btn
-          rounded
-          @click="dialogmdel = true"
-          label="¿Qué quieres publicar el día de hoy?"
-        />
-      </q-card>
-
-      <div class="q-ma-lg q-gutter-sm">
-        <q-dialog persistent full-width v-model="dialogmdel">
-          <q-card>
-            <q-toolbar>
-              <q-toolbar-title>
-                <span class="text-weight-bold">Nueva publicación</span>
-              </q-toolbar-title>
-              <q-btn flat round dense icon="close" v-close-popup />
-            </q-toolbar>
-            <q-card-section>
-              <FormPublicaciones
-                :closeDialog="closeDialog"
-                :resetListPublication="resetListPublication"
-              />
-            </q-card-section>
-          </q-card>
-        </q-dialog>
-      </div>
+  <q-page class="q-pa-md">
+    <!-- Botón para nueva publicación -->
+    <div
+      v-if="dataUser.roles.find((itm) => itm.value == 2)"
+      class="row justify-center q-mb-lg"
+    >
+      <q-btn
+        rounded
+        color="primary"
+        unelevated
+        label="¿Qué quieres publicar hoy?"
+        @click="dialogmdel = true"
+        icon="add_circle"
+        class="q-px-lg"
+      />
     </div>
 
-    <div>
-      <div v-if="posts && posts.length <= 0" class="text-center">
-        No hay resultados
-      </div>
-      <q-infinite-scroll @load="listPosts" :offset="250">
-        <div class="publicaciones" v-for="(item, index) in posts" :key="index">
-          <PublicacionesPage
-            :postt="item"
+    <!-- Diálogo de nueva publicación -->
+    <q-dialog v-model="dialogmdel" persistent full-width>
+      <q-card style="max-width: 600px; margin: auto; border-radius: 12px">
+        <q-toolbar>
+          <q-toolbar-title class="text-weight-bold"
+            >Nueva publicación</q-toolbar-title
+          >
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
+
+        <q-card-section>
+          <FormPublicaciones
+            :closeDialog="closeDialog"
             :resetListPublication="resetListPublication"
           />
-        </div>
-        <template v-slot:loading>
-          <div class="row justify-center q-my-md">
-            <q-spinner color="orange" size="30px" />
-          </div>
-        </template>
-      </q-infinite-scroll>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+    <!-- Lista de publicaciones -->
+    <div
+      v-if="!posts || posts.length === 0"
+      class="text-center text-grey q-mt-xl"
+    >
+      No hay resultados
     </div>
+
+    <q-infinite-scroll @load="listPosts" :offset="250">
+      <div v-for="(item, index) in posts" :key="index" class="q-mb-md">
+        <PublicacionesPage
+          :postt="item"
+          :resetListPublication="resetListPublication"
+        />
+      </div>
+
+      <template v-slot:loading>
+        <div class="row justify-center q-my-md">
+          <q-spinner color="primary" size="30px" />
+        </div>
+      </template>
+    </q-infinite-scroll>
   </q-page>
 </template>
 

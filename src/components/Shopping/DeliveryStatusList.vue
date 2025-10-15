@@ -1,7 +1,8 @@
 <template>
   <q-card class="q-pa-md q-rounded-xl shadow-2">
-    <q-card-section class="text-h6 text-weight-bold text-primary">
-      Historial de estados
+    <q-card-section class="row items-center justify-between text-primary">
+      <div class="text-h6 text-weight-bold">Historial de estados</div>
+      <q-btn dense flat icon="close" color="primary" v-close-popup />
     </q-card-section>
 
     <q-separator spaced />
@@ -28,8 +29,15 @@
       </q-item>
     </q-list>
 
-    <div v-else class="text-center text-grey-6 text-body2 q-my-md">
-      Sin cambios en el estado de entrega
+    <div v-else class="column items-center text-grey-6 text-body2 q-my-md">
+      <div>Sin cambios en el estado de entrega</div>
+      <q-btn
+        label="Cerrar"
+        color="primary"
+        flat
+        class="q-mt-sm"
+        v-close-popup
+      />
     </div>
   </q-card>
 </template>

@@ -1,206 +1,283 @@
 <template>
-  <q-card flat bordered class="q-pa-md q-mt-md">
-    <q-card-section>
-      <div class="text-h5 text-weight-medium text-center q-mb-md">
-        Confirmar datos de compra
-      </div>
-
-      <q-separator spaced />
-
-      <div class="row q-col-gutter-md q-mt-sm">
-        <div class="col-12 col-md-6">
-          <q-input
-            rounded
-            outlined
-            v-model="client.name_client"
-            label="Nombre"
-          />
-        </div>
-
-        <div class="col-12 col-md-6">
-          <q-input
-            rounded
-            outlined
-            v-model="client.lastName_client"
-            label="Apellido"
-          />
-        </div>
-
-        <div class="col-12 col-md-6">
-          <q-select
-            rounded
-            outlined
-            option-label="name"
-            v-model="client.typeIdentification"
-            :options="type_dentifications"
-            label="Tipo de identificación"
-          />
-        </div>
-
-        <div class="col-12 col-md-6">
-          <q-input
-            rounded
-            outlined
-            v-model="client.identification"
-            label="Número de identificación"
-          />
-        </div>
-
-        <div class="col-12 col-md-6">
-          <q-input
-            rounded
-            outlined
-            v-model="client.phone_number"
-            label="Número de teléfono"
-          />
-        </div>
-
-        <div class="col-12 col-md-6">
-          <q-input
-            rounded
-            outlined
-            v-model="client.email"
-            label="Email"
-            type="email"
-          />
-        </div>
-
-        <div class="col-12 col-md-6">
-          <q-input rounded outlined v-model="client.city" label="Municipio" />
-        </div>
-
-        <div class="col-12 col-md-6">
-          <q-input
-            rounded
-            outlined
-            v-model="client.zipCode"
-            label="Codigo postal"
-          />
-        </div>
-
-        <div class="col-12 col-md-6">
-          <q-input
-            label-color="black"
-            bg-color="light-blue-2"
-            rounded
-            outlined
-            v-model="client.address"
-            label="Dirección de entrega"
-          />
-        </div>
-      </div>
-    </q-card-section>
-  </q-card>
-
   <div>
-    <q-table
-      title="Listo para comprar"
-      :rows="products"
-      :columns="columns"
-      row-key="name"
-      hide-bottom
-      :rows-per-page-options="[0]"
-    >
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-      </template>
+    <template v-if="products.length > 0">
+      <!-- Formulario -->
+      <q-card flat bordered class="q-pa-md q-mt-md">
+        <q-card-section>
+          <div class="text-h5 text-weight-medium text-center q-mb-md">
+            Confirmar datos de compra
+          </div>
 
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td auto-width>
-            <q-btn
-              size="sm"
-              color="red-7"
-              round
-              dense
-              icon="remove"
-              @click="decreaseCant(props.rowIndex)"
-            />
-            <q-btn
-              size="sm"
-              color="green-7"
-              round
-              dense
-              icon="add"
-              @click="increaseCant(props.rowIndex)"
-              class="q-ml-xs"
-            />
-          </q-td>
+          <q-separator spaced />
 
-          <q-td
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
-            class="text-center"
-          >
-            <div
-              v-if="col.name === 'cant'"
-              class="flex items-center justify-center"
-            >
+          <div class="row q-col-gutter-md q-mt-md">
+            <div class="col-12 col-md-6">
               <q-input
-                type="number"
+                rounded
+                outlined
                 dense
-                borderless
-                min="1"
-                v-model.number="props.row.cant"
-                @update:model-value="updateManualCant(props.rowIndex)"
-                style="max-width: 60px; text-align: center"
+                v-model="client.name_client"
+                label="Nombre"
+                placeholder="Ej: Juan"
               />
             </div>
-            <span v-else>{{ col.value }}</span>
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
 
-    <hr />
+            <div class="col-12 col-md-6">
+              <q-input
+                rounded
+                outlined
+                dense
+                v-model="client.lastName_client"
+                label="Apellido"
+                placeholder="Ej: Pérez"
+              />
+            </div>
 
-    <h4>Total a pagar: {{ new Intl.NumberFormat().format(total) }}</h4>
+            <div class="col-12 col-md-6">
+              <q-select
+                rounded
+                outlined
+                dense
+                option-label="name"
+                v-model="client.typeIdentification"
+                :options="type_dentifications"
+                label="Tipo de identificación"
+              />
+            </div>
 
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn
-        fab
-        icon="attach_money"
-        color="warning"
-        label="Pagar"
-        title="Pagar"
-        @click="pagarPedido"
-        :loading="loadingCreateOrder"
-      />
-    </q-page-sticky>
-  </div>
+            <div class="col-12 col-md-6">
+              <q-input
+                rounded
+                outlined
+                dense
+                v-model="client.identification"
+                label="Número de identificación"
+                placeholder="Ej: 1234567890"
+              />
+            </div>
 
-  <!-- dialog para confimacion del pago -->
-  <q-dialog v-model="confirmPay">
-    <DialogPaymentProcessVue
-      :idsale="idsale"
-      type="'2'"
-      :closeDialog="closeDialog"
-    />
-  </q-dialog>
+            <div class="col-12 col-md-6">
+              <q-input
+                rounded
+                outlined
+                dense
+                v-model="client.phone_number"
+                label="Teléfono"
+                placeholder="Ej: 3001234567"
+              />
+            </div>
 
-  <!-- Dialog cambiar cantidad de producto x -->
-  <q-dialog v-model="changeCant">
-    <q-card>
-      <q-card-section class="q-pt-none">
-        <div v-if="showmessage.length > 0">{{ showmessage }}</div>
-        <q-input
-          v-model="newcant"
-          type="number"
-          label="Cantidad"
-          @keyup="
-            addCantItem(editingCant);
-            alertMinCant(editingCant);
-          "
+            <div class="col-12 col-md-6">
+              <q-input
+                rounded
+                outlined
+                dense
+                v-model="client.email"
+                label="Correo electrónico"
+                type="email"
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                rounded
+                outlined
+                dense
+                v-model="client.city"
+                label="Municipio"
+                placeholder="Ej: Medellín"
+              />
+            </div>
+
+            <div class="col-12 col-md-6">
+              <q-input
+                rounded
+                outlined
+                dense
+                v-model="client.zipCode"
+                label="Código postal"
+                placeholder="Ej: 050001"
+              />
+            </div>
+
+            <div class="col-12">
+              <q-input
+                label-color="black"
+                bg-color="light-blue-1"
+                rounded
+                outlined
+                dense
+                autogrow
+                v-model="client.address"
+                label="Dirección de entrega"
+                placeholder="Ej: Calle 45 #12-34, Barrio Centro"
+              />
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- Tabla de productos -->
+      <q-table
+        title="Productos seleccionados"
+        :rows="products"
+        :columns="columns"
+        row-key="id"
+        flat
+        bordered
+        dense
+        hide-bottom
+        :rows-per-page-options="[0]"
+      >
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th auto-width />
+            <q-th
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+              class="text-center"
+            >
+              {{ col.label }}
+            </q-th>
+          </q-tr>
+        </template>
+
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td auto-width>
+              <div class="flex items-center justify-center">
+                <q-btn
+                  size="xs"
+                  flat
+                  dense
+                  round
+                  color="red"
+                  icon="remove"
+                  @click="decreaseCant(props.rowIndex)"
+                  class="q-pa-none"
+                />
+                <q-btn
+                  size="xs"
+                  flat
+                  dense
+                  round
+                  color="green"
+                  icon="add"
+                  @click="increaseCant(props.rowIndex)"
+                  class="q-ml-xs q-pa-none"
+                />
+              </div>
+            </q-td>
+
+            <q-td
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+              class="text-center"
+            >
+              <div v-if="col.name === 'cant'" class="q-mt-sm">
+                <q-input
+                  type="number"
+                  dense
+                  borderless
+                  min="1"
+                  v-model.number="props.row.cant"
+                  @update:model-value="updateManualCant(props.rowIndex)"
+                  class="text-center"
+                  style="max-width: 60px; margin: 0 auto"
+                />
+              </div>
+              <span v-else>{{ col.value }}</span>
+            </q-td>
+
+            <q-td auto-width class="text-center">
+              <q-btn
+                dense
+                round
+                flat
+                color="negative"
+                icon="delete"
+                @click="removeProduct(props.rowIndex)"
+              />
+            </q-td>
+          </q-tr>
+        </template>
+
+        <template v-slot:bottom>
+          <div class="row justify-between items-center full-width q-pa-md">
+            <div class="text-subtitle1 text-weight-medium">
+              Total: {{ new Intl.NumberFormat().format(total) }}
+            </div>
+          </div>
+        </template>
+      </q-table>
+
+      <hr />
+
+      <div
+        class="row items-center justify-between q-pa-md q-mt-md bg-grey-1 rounded-borders"
+      >
+        <div class="text-h6 text-weight-medium">
+          Total a pagar:
+          <span class="text-primary">{{
+            new Intl.NumberFormat().format(total)
+          }}</span>
+        </div>
+
+        <q-btn
+          color="amber-8"
+          text-color="black"
+          unelevated
+          rounded
+          size="md"
+          icon="attach_money"
+          label="Pagar"
+          @click="pagarPedido"
+          :loading="loadingCreateOrder"
+          class="q-px-md"
         />
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+      </div>
+    </template>
+
+    <!-- Mensaje de carrito vacío -->
+    <template v-else>
+      <div class="text-center q-pa-xl text-grey-7">
+        <q-icon name="shopping_cart" size="48px" color="grey-5" />
+        <div class="text-h5 q-mt-md">Carrito de compra vacío</div>
+        <div class="text-body2 text-grey-6">
+          Agrega productos para continuar con la compra.
+        </div>
+      </div>
+    </template>
+
+    <!-- Diálogos -->
+    <q-dialog v-model="confirmPay">
+      <DialogPaymentProcessVue
+        :idsale="idsale"
+        type="'2'"
+        :closeDialog="closeDialog"
+      />
+    </q-dialog>
+
+    <q-dialog v-model="changeCant">
+      <q-card>
+        <q-card-section class="q-pt-none">
+          <div v-if="showmessage.length > 0">{{ showmessage }}</div>
+          <q-input
+            v-model="newcant"
+            type="number"
+            label="Cantidad"
+            @keyup="
+              addCantItem(editingCant);
+              alertMinCant(editingCant);
+            "
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
 
 <script>
@@ -335,7 +412,7 @@ export default defineComponent({
           color: "warning",
           textColor: "white",
           icon: "las la-exclamation",
-          message: `Cantidad minima → ${product.minCant}`,
+          message: `Cantidad minima debe ser 1`,
         });
       }
     };
@@ -499,6 +576,28 @@ export default defineComponent({
       }
     };
 
+    const removeProduct = (rowIndex) => {
+      if (rowIndex === undefined || rowIndex < 0) return;
+
+      products.value.splice(rowIndex, 1);
+
+      const productstemp = localStorage.getItem("productCar")
+        ? JSON.parse(localStorage.getItem("productCar"))
+        : [];
+
+      productstemp.splice(rowIndex, 1);
+      localStorage.setItem("productCar", JSON.stringify(productstemp));
+
+      recalcTotal();
+
+      $q.notify({
+        color: "negative",
+        textColor: "white",
+        icon: "delete",
+        message: "Producto eliminado del carrito",
+      });
+    };
+
     return {
       products,
       changeCant,
@@ -523,6 +622,7 @@ export default defineComponent({
       increaseCant,
       decreaseCant,
       updateManualCant,
+      removeProduct,
     };
   },
   components: {

@@ -57,12 +57,6 @@
         />
       </div>
       <div class="q-mt-sm q-gutter-lg">
-        <q-btn
-          class="flat unelevated text-black text-weight-bolder"
-          size="sm"
-          @click="recoveryPassword()"
-          >recuperar contraseña</q-btn
-        >
         <q-btn class="text-black text-weight-bolder" to="registro" size="sm"
           >crear cuenta</q-btn
         >

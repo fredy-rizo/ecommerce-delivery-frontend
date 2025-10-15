@@ -54,24 +54,33 @@
   </q-infinite-scroll>
 
   <!-- detail product -->
-  <q-dialog full-width full-height v-model="detailmodal">
-    <q-card>
-      <q-toolbar>
-        <q-btn flat round dense icon="close" v-close-popup />
+  <q-dialog v-model="detailmodal" maximized>
+    <q-card class="bg-grey-1">
+      <q-toolbar class="bg-green-7 text-white">
+        <q-toolbar-title>{{
+          oneProduct?.name || "Detalles del producto"
+        }}</q-toolbar-title>
+        <q-btn flat round dense icon="close" v-close-popup class="text-white" />
       </q-toolbar>
-      <q-card-section>
+
+      <q-card-section class="q-pa-md">
         <div class="row justify-center">
-          <div class="col col-xs-12 col-sm-12 col-md-6 q-pa-sm">
+          <div class="col-12 col-md-8 col-lg-6">
             <ProductCard
               :fulldescription="true"
               :details="true"
               :productx="oneProduct"
               :showModalProduct="showModalProduct"
               :showDialogeditProduct="showDialogeditProduct"
+              class="shadow-3 rounded-borders"
             />
           </div>
         </div>
       </q-card-section>
+
+      <q-separator />
+
+      <q-card-actions align="right" class="q-pa-md"> </q-card-actions>
     </q-card>
   </q-dialog>
 

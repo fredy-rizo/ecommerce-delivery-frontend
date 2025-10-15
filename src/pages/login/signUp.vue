@@ -1,33 +1,34 @@
 <template>
-  <q-card-section class="text-center">
-    <div
-      style="
-        position: fixed;
-        height: 100%;
-        width: 100%;
-        left: 0;
-        bottom: 0;
-        z-index: -1;
-        background: #E0E0E0;
-      "
-    ></div>
-    <q-btn to="/" unelevated>
-      <img
-        class="q-ma-lg"
-        style="height: 200px; width: 200px"
-        src="~assets/QuokkaCircular.png"
-      />
-    </q-btn>
-    <h5 class="q-ma-xs text-weight-bolder">Bienvenido</h5>
-
-    <h5 class="q-ma-xs text-weight-bolder">REGISTRATE</h5>
-
-    <div class="row justify-center">
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
-        <FormSignUp />
+  <div
+    class="flex flex-center column q-pa-lg"
+    style="
+      min-height: 100vh;
+      background: linear-gradient(180deg, #fafafa 0%, #e0e0e0 100%);
+    "
+  >
+    <q-card
+      class="q-pa-lg shadow-4"
+      style="max-width: 480px; width: 100%; border-radius: 16px"
+    >
+      <div class="text-center">
+        <q-btn to="/" flat>
+          <img
+            src="~assets/QuokkaCircular.png"
+            style="height: 160px; width: 160px"
+            class="q-mb-md"
+          />
+        </q-btn>
+        <h4 class="text-weight-bold q-mb-none">Bienvenido</h4>
+        <p class="text-grey-8 text-subtitle2 q-mt-none">
+          Crea tu cuenta y únete a Quooka
+        </p>
       </div>
-    </div>
-  </q-card-section>
+
+      <q-separator class="q-my-md" />
+
+      <FormSignUp />
+    </q-card>
+  </div>
 </template>
 
 <script>
