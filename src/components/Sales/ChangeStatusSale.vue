@@ -1,38 +1,35 @@
 <template>
-  <div>
-    <div class="row justify-center">
-      <div class="col text-center">
-        <q-img
-          :src="imgpay || logogray"
-          spinner-color="white"
-          style="width: 100%"
-          :alt="logogray"
-        />
-      </div>
-    </div>
-    <div class="row justify-center self-end">
-      <div class="col">
-        <q-select
-          rounded
-          outlined
-          v-model="status"
-          :options="options"
-          option-label="name"
-          label="Estado"
-        />
-      </div>
-    </div>
-    <div class="row justify-center self-end">
-      <div class="col text-center">
-        <q-btn
-          fab
-          icon="save"
-          class="bg-green-7"
-          label="Guardar"
-          @click="changeStatus"
-          :loading="loading"
-        />
-      </div>
+  <div class="q-pa-md">
+    <div class="column items-center q-gutter-md">
+      <q-img
+        :src="imgpay || logogray"
+        spinner-color="grey-5"
+        style="max-width: 250px; border-radius: 12px"
+        :alt="logogray"
+      />
+
+      <q-select
+        rounded
+        outlined
+        dense
+        v-model="status"
+        :options="options"
+        option-label="name"
+        label="Estado del pago"
+        class="full-width"
+      />
+
+      <q-btn
+        color="green-7"
+        text-color="white"
+        unelevated
+        rounded
+        icon="save"
+        label="Guardar"
+        @click="changeStatus"
+        :loading="loading"
+        class="q-px-lg q-mt-sm"
+      />
     </div>
   </div>
 </template>

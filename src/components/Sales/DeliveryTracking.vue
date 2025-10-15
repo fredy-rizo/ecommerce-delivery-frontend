@@ -29,7 +29,7 @@
         outlined
         autogrow
         dense
-        v-model="description"
+        v-model="detail"
         type="textarea"
         label="Detalles o comentario"
         class="col-12"
@@ -73,11 +73,19 @@ export default {
     const $q = useQuasar();
     const estado = ref(null);
     const description = ref("");
+    const detail = ref("");
     const options = ref([
-      "Hola, estamos empacando tu pedido.",
-      "Genial, tu pedido ha sido enviando con numero de guia: ",
-      "Vaya, has devuelto el producto.",
-      "Listo, nos han notificado que el pedido ha sido entregado, esperamos que vuelvas pronto.",
+      "Pedido recibido. Estamos preparando tu envío.",
+      "Pedido en alistamiento. Empacando y verificando productos.",
+      "Pedido despachado con número de guía:",
+      "Pedido despachado. En tránsito hacia el centro de distribución.",
+      "Pedido en ruta de entrega. Con el mensajero asignado.",
+      "Pedido entregado exitosamente al destinatario.",
+      "Entrega fallida. Intentaremos nuevamente.",
+      "Pedido retenido por novedad en la dirección. Contactaremos al cliente.",
+      "Pedido cancelado por solicitud del cliente.",
+      "Devolución en proceso hacia el remitente.",
+      "Devolución completada. Producto recibido por el remitente.",
     ]);
 
     watch(estado, () => {
@@ -107,6 +115,7 @@ export default {
           },
           body: JSON.stringify({
             description: description.value,
+            detail: detail.value,
           }),
         }
       );
@@ -134,6 +143,7 @@ export default {
 
     return {
       description,
+      detail,
       saveStatus,
       options,
       estado,
