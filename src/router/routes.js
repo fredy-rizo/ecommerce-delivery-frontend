@@ -64,12 +64,6 @@ const routes = [
       //     ),
       // },
       {
-        path: "eventos",
-        name: "eventos",
-        component: () =>
-          import(/* webpackChunkName: "EVENTOS" */ "pages/eventos/EventosPage"),
-      },
-      {
         path: "sales",
         name: "sales",
         component: () =>
@@ -99,15 +93,6 @@ const routes = [
             /* webpackChunkName: "VENDEDOR-ID" */ "pages/Perfil/Vendedor/VendedorId"
           ),
       },
-      {
-        path: "mensajes",
-        name: "mensajes",
-        component: () =>
-          import(
-            /* webpackChunkName: "MENSAJES" */ "pages/Mensajes/MensajesId"
-          ),
-      },
-
       {
         path: "perfil-page",
         name: "perfil-page",
