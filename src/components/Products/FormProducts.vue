@@ -74,19 +74,21 @@
       <q-input
         rounded
         outlined
-        v-model="price"
+        v-model.number="price"
         label="Precio COP"
         type="number"
-        placeholder="Precio del producto ..."
+        placeholder="0"
+        stack-label
       />
 
       <q-input
         rounded
         outlined
-        v-model="minCant"
-        label="Minima cantidad de venta"
+        v-model.number="minCant"
+        label="Stock"
         type="number"
         placeholder="1"
+        stack-label
       />
     </div>
 
@@ -160,8 +162,8 @@ export default {
     const description = ref(
       props.oneProduct ? props.oneProduct.description : null
     );
-    const price = ref(props.oneProduct ? props.oneProduct.price : 0);
-    const minCant = ref(props.oneProduct ? props.oneProduct.minCant : 1);
+    const price = ref(props.oneProduct ? props.oneProduct.price : "");
+    const minCant = ref(props.oneProduct ? props.oneProduct.minCant : "");
     const types = ref(
       props.oneProduct && props.oneProduct.typeprod
         ? {

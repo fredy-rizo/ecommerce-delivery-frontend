@@ -30,9 +30,34 @@
       </q-card>
     </q-dialog>
 
+    <!-- Dialog para ver el comprobante -->
+    <q-dialog v-model="dialogImg" maximized persistent>
+      <q-card class="bg-dark">
+        <q-bar class="bg-grey-9 text-white items-center">
+          <q-icon name="receipt_long" size="20px" class="q-mr-sm" />
+          <div class="text-subtitle1">Comprobante de pago</div>
+          <q-space />
+          <q-btn dense flat round icon="close" v-close-popup color="white">
+            <q-tooltip content-class="bg-white text-primary">Cerrar</q-tooltip>
+          </q-btn>
+        </q-bar>
+
+        <q-card-section
+          class="q-pa-none flex flex-center"
+          style="height: 100vh"
+        >
+          <q-img
+            :src="imgPreview"
+            fit="contain"
+            style="max-width: 100%; max-height: 100%"
+          />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <!-- Filtros y botón de exportación moderno -->
     <div class="row">
-      <BarFilterSales class="col" :getdataFilter="getdataFilter" />
+      <BarFilterSales class="col" :getDataFilter="getDataFilter" />
       <q-btn
         class="col-2"
         v-if="urldownload == ''"
@@ -122,7 +147,31 @@
             :props="props"
             class="text-center excel-cell"
           >
-            {{ col.value }}
+            <!-- Comprobante -->
+            <template v-if="col.name === 'imgPay'">
+              <q-btn
+                v-if="
+                  props.row.imgPay &&
+                  props.row.imgPay.length > 0 &&
+                  props.row.imgPay[0].imgPay
+                "
+                label="Ver"
+                color="primary"
+                size="sm"
+                @click="
+                  () => {
+                    imgPreview = props.row.imgPay[0].imgPay;
+                    dialogImg = true;
+                  }
+                "
+              />
+              <span v-else>-</span>
+            </template>
+
+            <!-- Campos normales -->
+            <template v-else>
+              {{ col.value }}
+            </template>
           </q-td>
         </q-tr>
       </template>
@@ -172,6 +221,13 @@
 
 <script>
 const columns = [
+  {
+    name: "imgPay",
+    align: "center",
+    label: "Comprobante",
+    field: (row) => row.imgPay && row.imgPay.length > 0 && row.imgPay[0].imgPay,
+    sortable: true,
+  },
   {
     name: "estado",
     align: "center",
@@ -261,10 +317,15 @@ export default {
 
     const dialogTrace = ref(false);
     const dialogchangestatus = ref(false);
+    const dialogImg = ref(false);
+    const imgPreview = ref("");
+
     const liststatus = ref([]);
     const idSale = ref("");
     const imgpay = ref("");
+    const loading = ref(false);
     const filter = ref({});
+    const paginations = ref({ pag: 1, perpage: 10, pags: 1 });
     const pagination = ref({
       page: 1,
       rowsPerPage: 10,
@@ -374,9 +435,53 @@ export default {
       getSales();
     };
 
-    const getdataFilter = (data) => {
-      filter.value = data;
-      getSales();
+    // Reiniciar listado
+    const resetListSale = async () => {
+      sales.value = [];
+      paginations.value.pag = 1;
+      const res = await getSales();
+      if (res && Array.isArray(res.data)) {
+        sales.value = [...res.data];
+        paginations.value.pags = res.paginations?.props || 1;
+      }
+      loading.value = false;
+    };
+
+    const getDataFilter = async (query) => {
+      if (!query) {
+        await resetListSale();
+        return;
+      }
+
+      loading.value = true;
+      const sessionUser = validateUser({ rol: 2 });
+      let headers = { "Content-Type": "application/json" };
+      if (sessionUser?.token)
+        headers.Authorization = `Bearer ${sessionUser.token}`;
+
+      try {
+        const response = await fetch(
+          `${process.env.API_SERVER}/api/sale/get-search/${encodeURIComponent(
+            query
+          )}`,
+          {
+            method: "POST",
+            headers,
+          }
+        );
+        const res = await response.json();
+        ValidateSession(res, router);
+        console.log(res);
+
+        if (res.status && Array.isArray(res.data)) {
+          sales.value = [...res.data];
+          pagination.value.pags = res.pagination?.pags || 1;
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        loading.value = false;
+      }
     };
 
     const closeDialog = () => {
@@ -389,7 +494,7 @@ export default {
     return {
       handleList,
       sales,
-      getdataFilter,
+      getDataFilter,
       getSales,
       pagination,
       columns,
@@ -400,9 +505,13 @@ export default {
       liststatus,
       idSale,
       imgpay,
+      loading,
       closeDialog,
       closedialogstatus,
       dialogchangestatus,
+      resetListSale,
+      dialogImg,
+      imgPreview,
     };
   },
   components: {

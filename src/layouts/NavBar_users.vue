@@ -6,29 +6,19 @@
           flat
           dense
           round
-          text-color="black"
+          text-color="white"
           icon="las la-bars"
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
 
         <q-btn flat dense round to="/">
-          <img style="height: 45px" src="~assets/logo_quooka.png" />
+          <img
+            style="height: 40px; width: auto"
+            src="~assets/logo_quooka.png"
+          />
         </q-btn>
-        <!-- <q-dialog v-model="opendialog">
-          <InviteClubMembership />
-        </q-dialog> -->
-        <q-toolbar-title style="color: black"> Ecommerce </q-toolbar-title>
-        <q-btn
-          flat
-          round
-          dense
-          icon="newspaper"
-          clickable
-          tag="a"
-          to="posts"
-          v-if="platfrom == 'web'"
-        />
+        <q-space></q-space>
         <q-btn
           flat
           round
@@ -46,8 +36,8 @@
           icon="notifications"
           clickable
           tag="a"
-          to="notifications"
-          v-if="platfrom == 'movil'"
+          to="posts"
+          v-if="platfrom == 'web'"
         />
       </q-toolbar>
     </q-header>
@@ -71,13 +61,10 @@
                 {{ dataUser ? dataUser.name : "Invitado" }}
               </div>
               <div class="col">{{ dataUser ? dataUser.email : "" }}</div>
-              <div class="col">{{ dataUser ? dataUser.whatsapp : "" }}</div>
             </div>
           </div>
-          <!-- </q-img> -->
         </q-item>
 
-        <!-- <q-item-label header> Ecommerce </q-item-label> -->
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
@@ -95,17 +82,6 @@
             v-if="!dataUser || dataUser.id == 1"
           />
         </div>
-        <!-- <div class="column items-center q-pa-md">
-          <q-btn
-            push
-            to="registro"
-            color="green-7"
-            label="Registrate"
-            size="md"
-            v-close-popup
-            v-if="!dataUser || dataUser.id == 1"
-          />
-        </div> -->
         <div class="column items-center q-pa-md">
           <q-btn
             push
@@ -127,7 +103,6 @@
 import { ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { getDataUser } from "../tools/User";
-// import InviteClubMembership from "src/components/ClubCannabis/InviteClubMembership.vue";
 
 const productstemp = localStorage.getItem("productCar")
   ? JSON.parse(localStorage.getItem("productCar"))
@@ -153,33 +128,6 @@ const linksList = [
     platfrom: ["web"],
     roles: [], // codigo del rol permitido para mostrar
   },
-  // {
-  //   title: "Chat",
-  //   caption: "mensajes Privados",
-  //   icon: "las la-comments",
-  //   link: "mensajes",
-  //   session: true,
-  //   platfrom: ["movil", "web"],
-  //   roles: [], // codigo del rol permitido para mostrar
-  // },
-  // {
-  //   title: "Miembros",
-  //   caption: "Registra miembros al club",
-  //   icon: "las la-bookmark",
-  //   link: "miembrosseller",
-  //   session: true,
-  //   platfrom: ["web"],
-  //   roles: ["3", "2"], // codigo del rol permitido para mostrar
-  // },
-  // {
-  //   title: "Politicas de Privacidad",
-  //   caption: "Acuerdos de Ecommerce",
-  //   icon: "las la-shield-alt",
-  //   link: "politicas-page",
-  //   session: false,
-  //   platfrom: ["movil", "web"],
-  //   roles: [], // codigo del rol permitido para mostrar
-  // },
 ];
 
 export default {

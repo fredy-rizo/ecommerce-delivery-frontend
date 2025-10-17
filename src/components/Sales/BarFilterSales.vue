@@ -1,46 +1,42 @@
 <template>
-  <div class="row">
+  <div class="row q-ma-sm">
     <q-input
-      class="col-9"
-      filled
-      v-model="filter.general"
+      outlined
+      dense
+      rounded
+      v-model="query"
       label="Buscar ..."
-      debounce="1000"
+      debounce="400"
+      clearable
+      class="col"
     >
       <template v-slot:append>
         <q-icon name="search" />
       </template>
     </q-input>
-
-    <q-btn-dropdown class="col-3" color="primary" icon="calendar_month">
-      <q-date v-model="filter.date" minimal default-view="Months" />
-    </q-btn-dropdown>
   </div>
 </template>
 
 <script>
 import { ref, watch } from "vue";
+
 export default {
   props: {
-    getdataFilter: Function,
+    getDataFilter: {
+      type: Function,
+      required: true,
+    },
   },
   setup(props) {
-    const filter = ref({
-      general: "",
-      generalNumber: "",
-      title: "",
-      description: "",
-      type: 0,
-      date: "",
+    const query = ref("");
+
+    watch(query, (newQuery) => {
+      if (typeof props.getDataFilter === "function") {
+        props.getDataFilter(newQuery);
+      }
     });
 
-    watch(filter.value, (data) => {
-      props.getdataFilter(data);
-    });
-
-    return {
-      filter,
-    };
+    return { query };
   },
 };
 </script>

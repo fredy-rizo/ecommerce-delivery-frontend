@@ -1,5 +1,26 @@
 <template>
-  <BarFilterProductsVue :getDataFilter="getDataFilter" />
+  <div class="row items-center justify-between q-pa-sm">
+    <div class="col">
+      <BarFilterProductsVue
+        :getDataFilter="getDataFilter"
+        :getProductsByType="getProductsByType"
+      />
+    </div>
+    <div
+      class="col-auto flex items-center q-ml-md"
+      v-if="dataUser.roles.find((itm) => itm.value == 2)"
+    >
+      <q-btn
+        color="green-7"
+        label="Agregar"
+        unelevated
+        class="q-px-md q-py-xs text-white text-weight-medium shadow-2"
+        no-caps
+        @click="dialogmdel = true"
+      />
+    </div>
+  </div>
+
   <q-dialog persistent full-width v-model="dialogmdel">
     <q-card>
       <q-toolbar>
@@ -19,16 +40,6 @@
       </q-card-section>
     </q-card>
   </q-dialog>
-
-  <q-page-sticky
-    style="z-index: 9"
-    position="bottom-right"
-    :offset="[18, 18]"
-    @click="dialogmdel = true"
-    v-if="dataUser.roles.find((itm) => itm.value == 2)"
-  >
-    <q-btn fab icon="add" class="bg-green-7" />
-  </q-page-sticky>
 
   <!-- listado de productos -->
   <q-infinite-scroll @load="listProducts" :offset="100">
@@ -54,18 +65,40 @@
   </q-infinite-scroll>
 
   <!-- detail product -->
-  <q-dialog v-model="detailmodal" maximized>
-    <q-card class="bg-grey-1">
-      <q-toolbar class="bg-green-7 text-white">
-        <q-toolbar-title>{{
-          oneProduct?.name || "Detalles del producto"
-        }}</q-toolbar-title>
-        <q-btn flat round dense icon="close" v-close-popup class="text-white" />
+  <q-dialog
+    v-model="detailmodal"
+    persistent
+    transition-show="scale"
+    transition-hide="scale"
+  >
+    <q-card
+      class="bg-grey-1 q-pa-none shadow-4"
+      style="width: 800px; max-width: 90vw"
+    >
+      <q-toolbar
+        class="bg-white text-dark q-px-md q-py-sm shadow-1 items-center justify-between rounded-t-lg"
+      >
+        <div class="row items-center no-wrap">
+          <q-icon name="info" color="green-7" size="md" class="q-mr-sm" />
+          <div class="text-subtitle1 text-weight-bold text-green-8">
+            {{ oneProduct?.name || "Detalles del producto" }}
+          </div>
+        </div>
+
+        <q-btn
+          flat
+          round
+          dense
+          icon="close"
+          color="grey-7"
+          class="hover:bg-grey-3 transition-all"
+          v-close-popup
+        />
       </q-toolbar>
 
       <q-card-section class="q-pa-md">
         <div class="row justify-center">
-          <div class="col-12 col-md-8 col-lg-6">
+          <div class="col-12">
             <ProductCard
               :fulldescription="true"
               :details="true"
@@ -77,10 +110,6 @@
           </div>
         </div>
       </q-card-section>
-
-      <q-separator />
-
-      <q-card-actions align="right" class="q-pa-md"> </q-card-actions>
     </q-card>
   </q-dialog>
 
@@ -134,7 +163,7 @@ export default defineComponent({
     const products = ref([]);
     const oneProduct = ref(null);
     const pagination = ref({ pag: 1, perpage: 10, pags: 1 });
-    const filter = ref({});
+    const filter = ref({ title: "" });
 
     const dataUser = getDataUser();
 
@@ -223,9 +252,73 @@ export default defineComponent({
     };
 
     // Filtrar listado
-    const getDataFilter = (data) => {
-      filter.value = data;
-      resetListProducts();
+    const getDataFilter = async (query) => {
+      if (!query) {
+        await resetListProducts();
+        return;
+      }
+
+      loading.value = true;
+      const sessionUser = validateUser({ rol: 1 });
+      let headers = { "Content-Type": "application/json" };
+      if (sessionUser?.token)
+        headers.Authorization = `Bearer ${sessionUser.token}`;
+
+      try {
+        const response = await fetch(
+          `${
+            process.env.API_SERVER
+          }/api/product/search-product/${encodeURIComponent(query)}`,
+          {
+            method: "POST",
+            headers,
+          }
+        );
+
+        const res = await response.json();
+        ValidateSession(res, router);
+
+        if (res.status && Array.isArray(res.data)) {
+          products.value = [...res.data];
+          pagination.value.pags = res.pagination?.pags || 1;
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    // listado por categoria
+    const getProductsByType = async (typeValue) => {
+      const sessionUser = validateUser({ rol: 1 });
+      let headers = { "Content-Type": "application/json" };
+      if (sessionUser?.token)
+        headers.Authorization = `Bearer ${sessionUser.token}`;
+
+      try {
+        const url = `${process.env.API_SERVER}/api/product/get-product-type-prd/${typeValue}/${pagination.value.pag}/${pagination.value.perpage}`;
+
+        const response = await fetch(url, {
+          method: "POST",
+          mode: "cors",
+          headers,
+        });
+
+        const res = await response.json();
+        ValidateSession(res, router);
+
+        if (res.status && Array.isArray(res.data)) {
+          products.value = res.data;
+          pagination.value.pags = res.pagination?.pags || 1;
+        } else {
+          products.value = [];
+          pagination.value.pags = 1;
+        }
+      } catch (err) {
+        console.error("Error en getProductsByType:", err);
+        products.value = [];
+      }
     };
 
     // cerrar dialogos/modales
@@ -302,6 +395,7 @@ export default defineComponent({
       loading,
       showModalProduct,
       handleProductUpdate,
+      getProductsByType,
     };
   },
 });

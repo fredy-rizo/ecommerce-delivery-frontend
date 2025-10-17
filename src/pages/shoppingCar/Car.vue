@@ -334,27 +334,35 @@ export default defineComponent({
     ]);
 
     const loadProducts = () => {
-      const productstemp = localStorage.getItem("productCar")
-        ? JSON.parse(localStorage.getItem("productCar"))
-        : [];
-      let rows = [];
-      for (let index = 0; index < productstemp.length; index++) {
-        const element = productstemp[index];
+      const stored = localStorage.getItem("productCar");
 
-        rows.push({
-          item: index,
-          _id: element._id,
-          titl: element.title,
-          cant: element.cant,
-          pric: element.price,
-          minCant: element.minCant,
-          subTotal: element.price * element.cant,
-        });
-
-        total.value = total.value + element.price * element.cant;
+      if (!stored) {
+        products.value = [];
+        total.value = 0;
+        return;
       }
+
+      const productstemp = JSON.parse(stored);
+      if (!Array.isArray(productstemp) || productstemp.length === 0) {
+        products.value = [];
+        total.value = 0;
+        return;
+      }
+
+      const rows = productstemp.map((element, index) => ({
+        item: index,
+        _id: element._id,
+        titl: element.title,
+        cant: element.cant,
+        pric: element.price,
+        minCant: element.minCant,
+        subTotal: element.price * element.cant,
+      }));
+
       products.value = rows;
+      total.value = rows.reduce((s, r) => s + r.subTotal, 0);
     };
+
     loadProducts();
 
     watch(products, () => {
@@ -459,7 +467,7 @@ export default defineComponent({
     };
 
     const columns = [
-      { name: "title", label: "Nombre", field: "titl" },
+      { name: "titl", label: "Nombre", field: "titl" },
       { name: "cant", label: "Cantidad", field: "cant" },
       { name: "price", label: "Precio", field: "pric" },
       // { name: "total", label: "Total", field: "subTotal" },
@@ -579,16 +587,13 @@ export default defineComponent({
     const removeProduct = (rowIndex) => {
       if (rowIndex === undefined || rowIndex < 0) return;
 
-      products.value.splice(rowIndex, 1);
-
-      const productstemp = localStorage.getItem("productCar")
-        ? JSON.parse(localStorage.getItem("productCar"))
-        : [];
-
+      const productstemp = JSON.parse(
+        localStorage.getItem("productCar") || "[]"
+      );
       productstemp.splice(rowIndex, 1);
       localStorage.setItem("productCar", JSON.stringify(productstemp));
 
-      recalcTotal();
+      loadProducts(); // ← fuerza refresco
 
       $q.notify({
         color: "negative",

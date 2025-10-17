@@ -2,7 +2,15 @@
   <div class="q-pa-md">
     <p class="text-h5 q-mb-md">Compras realizadas</p>
 
+    <!-- Si no hay compras -->
+    <div v-if="shoppingList.length === 0" class="text-center q-pa-xl text-grey">
+      <q-icon name="shopping_bag" size="64px" class="q-mb-md text-grey-6" />
+      <p class="text-subtitle">Aun no has realizado tu primera compra</p>
+    </div>
+
+    <!-- Si existen compras -->
     <q-table
+      v-else
       :rows="shoppingList"
       :columns="columns"
       row-key="_id"

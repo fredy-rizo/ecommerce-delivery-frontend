@@ -58,11 +58,11 @@
           />
         </template>
       </q-input>
-
+      <!--
       <div class="row justify-center">
         <q-toggle v-model="invited" />
         <p class="text-black text-weight-bolder q-ma-sm">Me invitaron</p>
-      </div>
+      </div> -->
 
       <div class="row">
         <div class="col" v-if="invited">
@@ -81,13 +81,11 @@
         </div>
       </div>
 
-      <div class="row justify-center">
+      <div class="row justify-center items-center q-gutter-sm">
+        <router-link to="politicas-page" class="text-black text-weight-bolder">
+          Aceptar Términos y Condiciones
+        </router-link>
         <q-toggle v-model="accept" />
-        <router-link
-          class="text-black text-weight-bolder q-ma-sm"
-          to="politicas-page"
-          >Aceptar Terminos y Condiciones</router-link
-        >
       </div>
 
       <div class="q-ma-sm q-gutter-lg">

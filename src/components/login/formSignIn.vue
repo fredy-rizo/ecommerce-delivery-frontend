@@ -105,7 +105,7 @@ export default {
               color: "negative",
               textColor: "white",
               icon: "las la-exclamation",
-              message: response.message,
+              message: "Contraseña o email incorrecto",
             });
           } else {
             localStorage.setItem("user", JSON.stringify(response.user));

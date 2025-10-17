@@ -1,5 +1,47 @@
 <template>
-  <q-card>
+  <q-card class="relative-position">
+    <!-- 🔷 Boton desplegable para editar y carrito -->
+    <q-btn-dropdown
+      class="absolute top-0 right-0 bg-green-9 text-white"
+      round
+      dense
+      size="sm"
+      icon="more_vert"
+      style="z-index: 2"
+      no-caps
+      dropdown-icon="none"
+    >
+      <q-list dense bordered separator>
+        <q-item
+          clickable
+          v-if="
+            userData.roles.find(
+              (item) => item.value == 1 || item.value === 3 || item.value === 4
+            )
+          "
+          v-ripple
+          @click="addProductCar(product)"
+        >
+          <q-item-section avatar
+            ><q-icon name="shopping_cart" size="16px"
+          /></q-item-section>
+          <q-item-section class="text-caption">Carrito</q-item-section>
+        </q-item>
+
+        <q-item
+          v-if="userData.roles.find((item) => item.value == 2)"
+          clickable
+          v-ripple
+          @click="showDialogeditProduct(product)"
+        >
+          <q-item-section avatar
+            ><q-icon size="16px" name="edit"
+          /></q-item-section>
+          <q-item-section class="text-caption">Editar</q-item-section>
+        </q-item>
+      </q-list>
+    </q-btn-dropdown>
+
     <!--🔷 Swiper si tiene imagenes -->
     <swiper
       v-if="
@@ -36,27 +78,6 @@
     >
     </swiper>
 
-    <!-- 🔷 Boton editar -->
-    <q-btn
-      class="absolute btnaddEdit bg-green-9"
-      text-color="white"
-      round
-      icon="edit"
-      style="z-index: 2"
-      @click="showDialogeditProduct(product)"
-      v-if="userData.roles.find((item) => item.value == 2)"
-    />
-
-    <!-- 🔷 Boton carrito  -->
-    <q-btn
-      class="absolute btnaddCar bg-green-9"
-      text-color="white"
-      round
-      icon="local_grocery_store"
-      style="z-index: 2"
-      @click="addProductCar(product)"
-    />
-
     <!-- 🔷 Titulo -->
     <div class="row q-mt-sm q-mb-sm">
       <div class="col text-subtitle2 q-px-sm">
@@ -72,18 +93,6 @@
       </div>
     </div>
 
-    <!-- 🔷 Membresia -->
-    <!-- <div class="row q-mb-sm">
-      <div class="col q-px-sm">
-        <b>Tipo de membresia: </b>
-        {{
-          product.membership && product.membership.key
-            ? product.membership.value
-            : ""
-        }}
-      </div>
-    </div> -->
-
     <!-- 🔷 Descripcion al hacer click en card -->
     <div v-if="details" class="q-pa-sm text-caption descriptionx">
       <div v-if="product.description">
@@ -95,7 +104,7 @@
         <b>Tipo de producto:</b> {{ product.typeprod.value }}
       </div>
 
-      <div v-if="product.minCant"><b>Cantidad:</b> {{ product.minCant }}</div>
+      <div v-if="product.minCant"><b>Stock:</b> {{ product.minCant }}</div>
     </div>
   </q-card>
 </template>

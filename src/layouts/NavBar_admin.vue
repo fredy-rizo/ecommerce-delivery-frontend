@@ -1,23 +1,32 @@
 <template>
   <div>
-    <q-header class="bg-green-7 q-py-xs" elevated>
+    <q-header class="bg-green-7 text-white q-py-xs" elevated>
+      <!-- 🔷 Menu lateral-->
       <q-toolbar>
         <q-btn
           flat
           dense
           round
-          text-color="black"
+          text-color="white"
           icon="las la-bars"
-          aria-label="Menu"
+          aria-label="Abrir menu"
           @click="toggleLeftDrawer"
         />
 
+        <!-- 🔷 Logo -->
         <q-btn flat dense round to="/">
-          <img style="height: 45px" src="~assets/logo_quooka.png" />
+          <img
+            style="height: 40px; width: auto"
+            src="~assets/logo_quooka.png"
+          />
+          <q-toolbar-title class="text-weight-medium">
+            Ecommerce
+          </q-toolbar-title>
         </q-btn>
 
-        <q-toolbar-title style="color: black"> Ecommerce </q-toolbar-title>
+        <q-space></q-space>
 
+        <!-- 🔷 Navegacion principal -->
         <q-btn
           flat
           round
@@ -44,10 +53,6 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above :width="250">
       <q-list>
         <q-item class="q-pa-md">
-          <!-- <q-img
-            src="https://cdn.quasar.dev/img/material.png"
-            style="object-fit: fill; object-position: 50% 60%; height: 225px"
-          > -->
           <div class="row">
             <q-btn
               round
@@ -64,13 +69,10 @@
                 <div class="text-weight-bolder">{{ dataUser.name }}</div>
               </div>
               <div class="col">{{ dataUser.email }}</div>
-              <div class="col">{{ dataUser.whatsapp }}</div>
             </div>
           </div>
-          <!-- </q-img> -->
         </q-item>
 
-        <!-- <q-item-label header> Ecommerce </q-item-label> -->
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
@@ -112,7 +114,6 @@
           />
         </div>
       </q-list>
-      <q-item> </q-item>
     </q-drawer>
   </div>
 </template>
@@ -131,14 +132,6 @@ const linksList = [
     link: "inicio",
     roles: [],
   },
-  // {
-  //   title: "Miembros",
-  //   caption: "Invirtieron con nosotros",
-  //   icon: "groups",
-  //   link: "miembros",
-  //   platfrom: ["web"],
-  //   roles: ["3", "2"],
-  // },
   {
     title: "Ventas",
     caption: "Mis ventas",
@@ -147,28 +140,6 @@ const linksList = [
     link: "sales",
     roles: [],
   },
-  // {
-  //   title: "Chat",
-  //   caption: "mensajes Privados",
-  //   icon: "las la-comments",
-  //   platfrom: ["movil", "web"],
-  //   link: "mensajes",
-  //   roles: [],
-  // },
-  // {
-  //   title: "Usuarios",
-  //   caption: "Personas registradas",
-  //   icon: "las la-comments",
-  //   link: "mensajes",
-  // },
-  // {
-  //   title: "Politicas de Privacidad",
-  //   caption: "Acuerdos de Ecommerce",
-  //   icon: "las la-shield-alt",
-  //   link: "politicas-page",
-  //   platfrom: ["movil", "web"],
-  //   roles: [],
-  // },
 ];
 
 export default {
