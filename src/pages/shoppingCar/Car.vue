@@ -182,9 +182,12 @@
                   type="number"
                   dense
                   borderless
-                  min="1"
+                  min="0"
                   v-model.number="props.row.cant"
                   @update:model-value="updateManualCant(props.rowIndex)"
+                  :input-style="{
+                    color: props.row.cant === 0 ? 'red' : 'inherit',
+                  }"
                   class="text-center"
                   style="max-width: 60px; margin: 0 auto"
                 />
@@ -353,10 +356,10 @@ export default defineComponent({
         item: index,
         _id: element._id,
         titl: element.title,
-        cant: element.cant,
+        cant: 0,
         pric: element.price,
-        minCant: element.minCant,
-        subTotal: element.price * element.cant,
+        minCant: 0,
+        subTotal: 0,
       }));
 
       products.value = rows;
@@ -381,9 +384,9 @@ export default defineComponent({
 
     const updateManualCant = (index) => {
       const product = products.value[index];
-      if (product.cant < 1) product.cant = 1;
+      if (product.cant < 0) product.cant = 0;
 
-      product.subTotal = product.pric * product.cant;
+      product.subTotal = product.pric * (product.cant ?? 0);
 
       const productstemp = JSON.parse(localStorage.getItem("productCar")) || [];
       if (productstemp[index]) {
@@ -406,8 +409,9 @@ export default defineComponent({
 
     const decreaseCant = (index) => {
       const product = products.value[index];
-      if (product.cant > 1) {
+      if (product.cant > 0) {
         product.cant -= 1;
+        if (product.cant < 0) product.cant = 0;
         product.subTotal = product.cant * product.pric;
 
         const productstemp =
@@ -420,7 +424,7 @@ export default defineComponent({
           color: "warning",
           textColor: "white",
           icon: "las la-exclamation",
-          message: `Cantidad minima debe ser 1`,
+          message: `Cantidad minima es 0`,
         });
       }
     };
@@ -512,6 +516,19 @@ export default defineComponent({
           textColor: "white",
           icon: "las la-exclamation",
           message: "Debe completar todos los campos.",
+        });
+        loadingCreateOrder.value = false;
+        return;
+      }
+
+      // Validacion de cantidad
+      const invalidProduct = productstemp.find((p) => (p.cant ?? 0) < 1);
+      if (invalidProduct) {
+        $q.notify({
+          color: "negative",
+          textColor: "white",
+          icon: "las la-exclamation",
+          message: "No has seleccionado una cantidad minima de compra",
         });
         loadingCreateOrder.value = false;
         return;
