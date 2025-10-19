@@ -58,11 +58,6 @@
           />
         </template>
       </q-input>
-      <!--
-      <div class="row justify-center">
-        <q-toggle v-model="invited" />
-        <p class="text-black text-weight-bolder q-ma-sm">Me invitaron</p>
-      </div> -->
 
       <div class="row">
         <div class="col" v-if="invited">
@@ -81,17 +76,30 @@
         </div>
       </div>
 
-      <div class="row justify-center items-center q-gutter-sm">
-        <router-link to="politicas-page" class="text-black text-weight-bolder">
-          Aceptar Términos y Condiciones
-        </router-link>
-        <q-toggle v-model="accept" />
-      </div>
+      <div class="q-mt-md">
+        <div class="row items-center q-mb-md">
+          <q-toggle v-model="accept" color="warning" />
+          <router-link
+            to="politicas-page"
+            class="text-black q-ml-sm"
+            style="text-decoration: none; font-size: 14px"
+          >
+            Acepto los Términos y condiciones
+          </router-link>
+        </div>
 
-      <div class="q-ma-sm q-gutter-lg">
-        <router-link class="text-black text-weight-bolder" to="login"
-          >Ya tengo una cuenta</router-link
-        >
+        <div class="text-center">
+          <span class="text-grey-7" style="font-size: 14px"
+            >¿Ya tienes una cuenta?</span
+          >
+          <router-link
+            class="text-black text-weight-bold q-ml-xs"
+            to="login"
+            style="text-decoration: none"
+          >
+            Iniciar sesión
+          </router-link>
+        </div>
       </div>
 
       <div class="row justify-center">
@@ -177,11 +185,11 @@ export default {
             color: "green-4",
             textColor: "white",
             icon: "cloud_done",
-            message: response.message,
+            message: "Usuario creado exitosamente",
           });
           localStorage.setItem("token", response.token);
           localStorage.setItem("user", JSON.stringify(response.user));
-          return router.push({ name: "inicio" });
+          return router.push({ name: "security-code" });
         })
         .catch((err) => {
           console.log("Error al procesar respuesta → ", err);

@@ -45,25 +45,54 @@
         </template>
       </q-input>
 
-      <div class="q-mt-md">
+      <div class="row justify-center q-mt-md">
         <q-btn
-          dark-percentage
-          unelevated
           rounded
+          outlined
+          color="green-6"
+          bg-color="grey-2"
           type="submit"
           label="Iniciar Sesion"
-          color="warning"
-          text-color="black"
+          input-class="text-h6 text-weight-bold tracking-widest"
         />
       </div>
-      <div class="q-mt-sm q-gutter-lg">
-        <q-btn class="text-black text-weight-bolder" to="registro" size="sm"
-          >crear cuenta</q-btn
-        >
+
+      <div class="row q-col-gutter-md q-mt-sm">
+        <div class="col-6">
+          <q-btn
+            outline
+            rounded
+            color="black"
+            label="Crear cuenta"
+            to="registro"
+            class="full-width"
+            no-caps
+            padding="10px 16px"
+          />
+        </div>
+
+        <div class="col-6">
+          <q-btn
+            outline
+            rounded
+            color="black"
+            label="Confirmar cuenta"
+            to="security-code"
+            class="full-width"
+            no-caps
+            padding="10px 16px"
+          />
+        </div>
       </div>
     </q-form>
   </div>
 </template>
+
+<style scoped>
+.tracking-widest {
+  letter-spacing: 0.5em;
+}
+</style>
 
 <script>
 import { ref } from "vue";

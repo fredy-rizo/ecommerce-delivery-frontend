@@ -12,6 +12,11 @@ const routes = [
       import(/* webpackChunkName: "REGISTRO" */ "pages/login/signUp"),
   },
   {
+    path: "/security-code",
+    name: "security-code",
+    component: () => import(/* webpackChunkName: "SEGURITY-CODE" */ "pages/security/secureCode")
+  },
+  {
     path: "/auth-page",
     name: "auth-page",
     component: () =>
@@ -42,27 +47,6 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "INICIO" */ "pages/Inicio/InicioPage"),
       },
-      // {
-      //   path: "grupos",
-      //   name: "grupos",
-      //   component: () => import("pages/Grupos/GruposPage"),
-      // },
-      // {
-      //   path: "miembros",
-      //   name: "miembros",
-      //   component: () =>
-      //     import(
-      //       /* webpackChunkName: "MIEMBROS" */ "pages/Miembros/MiembrosPage"
-      //     ),
-      // },
-      // {
-      //   path: "miembrosSeller",
-      //   name: "miembrosseller",
-      //   component: () =>
-      //     import(
-      //       /* webpackChunkName: "MIEMBROS para registrar por un vendedor/promotor" */ "pages/Miembros/MiembrosSellerPage"
-      //     ),
-      // },
       {
         path: "sales",
         name: "sales",
