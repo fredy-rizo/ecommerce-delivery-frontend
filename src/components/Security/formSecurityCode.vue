@@ -161,11 +161,6 @@ export default {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       };
-      console.log(
-        "JSON.stringify(data)",
-        JSON.stringify(data),
-        "JSON.stringify(data)"
-      );
 
       try {
         const response = await fetch(
