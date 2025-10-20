@@ -212,7 +212,6 @@ export default {
 
       fetch(process.env.API_SERVER + "/api/user/verify-account", options)
         .then((respone) => {
-          if (!respone.ok) throw new Error("Error en la respuesta");
           return respone.json();
         })
         .then((response) => {
