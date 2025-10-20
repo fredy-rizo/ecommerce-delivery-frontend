@@ -115,47 +115,49 @@ export default {
         password: password.value,
       };
 
-      const options = {
+      fetch(process.env.API_SERVER + "/api/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      };
+      })
+        .then(async (res) => {
+          const response = await res.json();
+          if (!res.ok)
+            throw new Error(
+              response.msj || "Error en la respuesta del servidor"
+            );
 
-      fetch(process.env.API_SERVER + "/api/user/login", options)
-        .then((response) => {
-          // console.log("Respuesta de API → ", response);
-          if (!response.ok) throw new Error("Error en la respuesta");
-          return response.json();
-        })
-        .then((response) => {
-          // console.log("Datos recibidos → ", response);
-          if (response.status == false) {
+          if (!response.status) {
             $q.notify({
               color: "negative",
               textColor: "white",
               icon: "las la-exclamation",
-              message: "Contraseña o email incorrecto",
+              message: response.msj || "Error al iniciar sesión",
             });
-          } else {
-            localStorage.setItem("user", JSON.stringify(response.user));
-            localStorage.setItem("token", response.token);
-
-            $q.notify({
-              color: "green-4",
-              textColor: "white",
-              icon: "cloud_done",
-              message: "Iniciando sesion...",
-            });
-            return router.push({ name: "inicio" });
+            return;
           }
+
+          localStorage.setItem("user", JSON.stringify(response.user));
+          localStorage.setItem("token", response.token);
+
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: response.msj || "Inicio de sesión exitoso",
+          });
+
+          router.push({ name: "inicio" });
         })
         .catch((err) => {
-          console.log("Error al procesar respuesta → ", err);
+          console.error("Error al procesar respuesta →", err);
           $q.notify({
             color: "negative",
             textColor: "white",
             icon: "las la-exclamation",
-            message: "Hubo un error con la solicitud. Intentalo nuevamente",
+            message:
+              err.message ||
+              "Hubo un error con la solicitud. Inténtalo nuevamente",
           });
         });
     };

@@ -39,7 +39,7 @@ const getDataUser = () => {
   const dataUser = JSON.parse(
     localStorage.getItem("user")
       ? localStorage.getItem("user")
-      : '{"id":"1", "name": "Invitado", "direccion": "Indefinido", "whatsapp": "1234567890", "email": "Invitado@email.com", "type":0, "roles":[{"name":"Invitado", "value":"4"}], "membership": {"status": { "code": 3, "status": "Cancelado" }, "expdate": "", "duedate": "", "value": ""}}'
+      : '{"id":"1", "name": "Invitado", "address": "Indefinido", "phone_number": "1234567890", "email": "Invitado@email.com", "type":0, "roles":[{"name":"Invitado", "value":"4"}], "membership": {"status": { "code": 3, "status": "Cancelado" }, "expdate": "", "duedate": "", "value": ""}}'
   )
   const token = localStorage.getItem("token")
   localStorage.setItem("user", JSON.stringify(dataUser))

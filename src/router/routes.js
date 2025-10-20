@@ -70,22 +70,6 @@ const routes = [
           ),
       },
       {
-        path: "vendedor-id",
-        name: "vendedor-id",
-        component: () =>
-          import(
-            /* webpackChunkName: "VENDEDOR-ID" */ "pages/Perfil/Vendedor/VendedorId"
-          ),
-      },
-      {
-        path: "perfil-page",
-        name: "perfil-page",
-        component: () =>
-          import(
-            /* webpackChunkName: "PERFIL-PAGE" */ "pages/Perfil/PerfilPage"
-          ),
-      },
-      {
         path: "Store",
         name: "Store",
         component: () =>

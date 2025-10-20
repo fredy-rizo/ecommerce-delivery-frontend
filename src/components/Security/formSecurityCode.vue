@@ -97,7 +97,7 @@
             color="green-6"
             class="q-ml-xs"
             style="font-weight: 600"
-            :loading="resengind"
+            :loading="resending"
             @click="resendCode"
           />
         </div>
@@ -124,7 +124,7 @@ export default {
 
     const email = ref(null);
     const code = ref(null);
-    const resengind = ref(false);
+    const resending = ref(false);
 
     const isValidEmail = (val) => {
       const emailValid =
@@ -132,7 +132,7 @@ export default {
       return emailValid.test(val) || "Digita un correo valido";
     };
 
-    const resendCode = async (val) => {
+    const resendCode = async () => {
       if (!email.value) {
         $q.notify({
           color: "warning",
@@ -153,7 +153,7 @@ export default {
         return;
       }
 
-      resengind.value = true;
+      resending.value = true;
 
       const data = { email: email.value };
       const options = {
@@ -167,24 +167,48 @@ export default {
           process.env.API_SERVER + "/api/user/resend-code",
           options
         );
-        if (!response.ok) throw new Error("Error en la respuesta");
 
         const result = await response.json();
 
-        if (result.status === false) {
+        if (result.status === 404) {
           $q.notify({
             color: "negative",
             textColor: "white",
             icon: "error",
-            message: "No se pudo reenviar el codigo",
+            message:
+              result.msj || "No se encontro ningun usuario con este corre",
+          });
+          return;
+        }
+
+        if (response.status === 400) {
+          $q.notify({
+            color: "orange-8",
+            textColor: "white",
+            icon: "info",
+            message: result.msj || "Esta cuenta ya esta activa",
+          });
+          return;
+        }
+
+        if (!response.ok) throw new Error("Error en la respuesta");
+
+        if (result.status === true) {
+          $q.notify({
+            color: "green-7",
+            textColor: "white",
+            icon: "check_circle",
+            message:
+              result.msj || "Codigo reenviado exitosamente. Revisa tu correo",
+          });
+        } else {
+          $q.notify({
+            color: "negative",
+            textColor: "white",
+            icon: "error",
+            message: result.msj || "No se pudo reenviar el codigo",
           });
         }
-        $q.notify({
-          color: "green-7",
-          textColor: "white",
-          icon: "check_circle",
-          message: "Codigo reenviado exitosamente. Revisa tu correo",
-        });
       } catch (err) {
         console.log("Error al reenviar codigo → ", err);
         $q.notify({
@@ -194,7 +218,7 @@ export default {
           message: "Hubo un error al reenviar el codigo. Intentalo nuevamente",
         });
       } finally {
-        resengind.value = false;
+        resending.value = false;
       }
     };
 
@@ -217,10 +241,10 @@ export default {
         .then((response) => {
           if (response.status === false) {
             $q.notify({
-              color: "negative",
+              color: response.alreadyVerified ? "orange" : "negative",
               textColor: "white",
-              icon: "las la-exclamation",
-              message: "Codigo o email incorrectos",
+              icon: response.alreadyVerified ? "info" : "las la-exclamation",
+              message: response.msj,
             });
             return;
           }
@@ -248,7 +272,7 @@ export default {
     return {
       email,
       code,
-      resengind,
+      resending,
       verifyAccount,
       isValidEmail,
       resendCode,
