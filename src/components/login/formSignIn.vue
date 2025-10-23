@@ -47,17 +47,19 @@
 
       <div class="row justify-center q-mt-md">
         <q-btn
+          unelevated
           rounded
-          outlined
           color="green-6"
-          bg-color="grey-2"
+          text-color="white"
           type="submit"
-          label="Iniciar Sesion"
-          input-class="text-h6 text-weight-bold tracking-widest"
+          label="Iniciar Sesión"
+          class="full-width"
+          size="lg"
+          style="font-weight: 600; padding: 12px"
         />
       </div>
 
-      <div class="row q-col-gutter-md q-mt-sm">
+      <div class="row q-col-gutter-md q-mt-md">
         <div class="col-6">
           <q-btn
             outline
@@ -83,6 +85,16 @@
             padding="10px 16px"
           />
         </div>
+      </div>
+
+      <div class="text-center q-mt-md">
+        <router-link
+          class="text-grey-7"
+          to="/change-password"
+          style="text-decoration: none; font-size: 14px"
+        >
+          ¿Olvidaste tu contraseña?
+        </router-link>
       </div>
     </q-form>
   </div>

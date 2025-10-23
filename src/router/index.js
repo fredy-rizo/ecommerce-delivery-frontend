@@ -41,7 +41,7 @@ export default route(function (/* { store, ssrContext } */) {
       user = null
     }
 
-    const rutasPublicas = ["login", "registro", "security-code", "auth-page", "changepassword"]
+    const rutasPublicas = ["login", "registro", "security-code", "auth-page", "change-password", "new-password-confirm"]
     const esRutaPublica = rutasPublicas.includes(to.name)
 
     if (!esRutaPublica && !user) {

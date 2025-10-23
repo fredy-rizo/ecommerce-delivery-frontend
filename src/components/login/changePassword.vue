@@ -4,45 +4,18 @@
       <q-input
         rounded
         outlined
-        color="black"
-        bg-color="grey-1"
+        color="green-6"
+        bg-color="grey-2"
+        label="Correo electrónico"
         v-model="email"
-        label="Email"
+        type="email"
         :rules="[
-          (val) => (val && val.length > 0) || 'Por Favor Escribe un Email',
+          (val) => (val && val.length > 0) || 'Campo vacío',
           isValidEmail,
         ]"
       >
         <template v-slot:prepend>
-          <q-icon name="las la-at" />
-        </template>
-      </q-input>
-
-      <q-input
-        rounded
-        outlined
-        color="black"
-        bg-color="grey-1"
-        v-model="password"
-        label="contraseña"
-        :type="isPwd ? 'password' : 'text'"
-        :rules="[
-          (val) =>
-            (val !== null && val !== '') || 'Por Favor Ingrese Su Contraseña',
-          (val) =>
-            (val && val.length >= 8) ||
-            'Por Favor Debe De Temer Como Minimo 8 Caracteres',
-        ]"
-      >
-        <template v-slot:prepend>
-          <q-icon name="las la-key" />
-        </template>
-        <template v-slot:append>
-          <q-icon
-            :name="isPwd ? 'visibility_off' : 'visibility'"
-            class="cursor-pointer"
-            @click="isPwd = !isPwd"
-          />
+          <q-icon name="email" color="green-6" />
         </template>
       </q-input>
 
@@ -50,9 +23,9 @@
         <q-btn
           unelevated
           rounded
-          label="Guardar"
+          label="Enviar codigo"
           type="submit"
-          color="warning"
+          color="green"
         />
       </div>
     </q-form>
@@ -65,67 +38,68 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 export default {
-  props: {
-    token: String,
-  },
-  setup(props) {
+  setup() {
     const $q = useQuasar();
+    const router = useRouter();
 
     const email = ref(null);
-    const password = ref(null);
-    const isPwd = ref(null);
 
-    //redireccion de pagina
-    const router = useRouter();
+    const isValidEmail = (val) => {
+      const emailValid =
+        /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailValid.test(val) || "El correo no parece ser válido";
+    };
+
+    const changePassword = async () => {
+      const data = {
+        email: email.value,
+      };
+
+      const options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      };
+
+      fetch(process.env.API_SERVER + "/api/user/recover-password-code", options)
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          if (response.status === false) {
+            $q.notify({
+              color: response.alreadyVerified ? "orange" : "negative",
+              textColor: "white",
+              icon: response.alreadyVerified ? "info" : "las la-exclamation",
+              message: response.msj,
+            });
+            return;
+          }
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "Codigo enviado",
+          });
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("user", JSON.stringify(response.user));
+          return router.push({ name: "new-password-confirm" });
+        })
+        .catch((err) => {
+          console.log("Error al procesar respuesta → ", err);
+          $q.notify({
+            color: "negative",
+            textColor: "white",
+            icon: "las la-exclamation",
+            message: "Hubo un error con la solicitud. Intentalo nuevamente",
+          });
+        });
+    };
 
     return {
       email,
-      password,
-      isPwd,
-
-      changePassword() {
-        const data = {
-          email: email.value.toLowerCase(),
-          password: password.value,
-        };
-
-        const options = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        };
-
-        fetch(
-          process.env.API_SERVER + "/api/users/change-password/" + props.token,
-          options
-        )
-          .then((response) => response.json())
-          .then((response) => {
-            if (response.status == false) {
-              $q.notify({
-                color: "negative",
-                textColor: "white",
-                icon: "las la-exclamation",
-                message: response.message,
-              });
-              return;
-            }
-            $q.notify({
-              color: "green-4",
-              textColor: "black",
-              icon: "cloud_done",
-              message: response.message,
-            });
-            return router.push({ name: "login" });
-          })
-          .catch((err) => console.error(err));
-      },
-
-      isValidEmail(val) {
-        const emailValid =
-          /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
-        return emailValid.test(val) || "El Correo no Parese Ser Valido";
-      },
+      isValidEmail,
+      changePassword,
     };
   },
 };

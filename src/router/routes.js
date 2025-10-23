@@ -17,14 +17,19 @@ const routes = [
     component: () => import(/* webpackChunkName: "SEGURITY-CODE" */ "pages/security/secureCode")
   },
   {
+    path: "/new-password-confirm",
+    name: "new-password-confirm",
+    component: () => import(/* webpackChunkName: "SEGURITY-CODE" */ "pages/login/confirmeNewPassword.vue")
+  },
+  {
     path: "/auth-page",
     name: "auth-page",
     component: () =>
       import(/* webpackChunkName: "AUTH-PAGE" */ "pages/login/authPage"),
   },
   {
-    path: "/changepassword/:token/user",
-    name: "changepassword",
+    path: "/change-password",
+    name: "change-password",
     component: () =>
       import(/* webpackChunkName: "AUTH-PAGE" */ "pages/login/recoveryPassword"),
   },
@@ -90,6 +95,12 @@ const routes = [
           import(
             /* webpackChunkName: "Tienda de productos" */ "pages/shopping/ShoppingList.vue"
           ),
+      },
+      {
+        path: "/update-password-width-token",
+        name: "update-password-width-token",
+        component: () =>
+          import(/* webpackChunkName: "AUTH-PAGE" */ "pages/login/updatePass/updatePasswordWithToken.vue"),
       },
       {
         path: "/notifications",

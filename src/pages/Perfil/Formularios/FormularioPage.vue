@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-xl bg-grey-1 flex flex-center">
-    <div>Actualizacion de formulario para usuario normal</div>
+    <!-- <div>Actualizacion de formulario para usuario normal</div> -->
     <q-card
       class="q-pa-xl shadow-3 rounded-borders-xl"
       style="max-width: 800px; width: 100%"
@@ -64,23 +64,33 @@
 
       <q-separator spaced />
 
-      <div class="q-mt-md column q-gutter-md">
-        <q-file
-          v-model="file"
-          label="Cambiar foto de perfil"
-          outlined
-          dense
-          accept="image/*"
-          class="col-12"
-          @change="previewFile"
-        />
+      <div class="q-mt-md row q-col-gutter-md">
+        <div class="col-12">
+          <q-file
+            v-model="file"
+            label="Cambiar foto de perfil"
+            outlined
+            dense
+            accept="image/*"
+            class="full-width"
+            @change="previewFile"
+          />
+        </div>
 
         <q-btn
           color="primary"
-          label="Guardar cambios"
+          flat
           icon="save"
-          class="col-12"
+          label="Guardar cambios"
           @click="updateUser"
+        />
+
+        <q-btn
+          color="green"
+          flat
+          icon="key"
+          label="Actualizar contraseña"
+          @click="goToUpdatePassword"
         />
       </div>
     </q-card>
@@ -101,6 +111,7 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 import { getDataUser } from "src/tools/User";
 
@@ -109,6 +120,7 @@ export default defineComponent({
   setup() {
     const $q = useQuasar();
     const dataUser = ref(getDataUser());
+    const router = useRouter();
     const file = ref(null);
     const previewAvatar = ref(
       dataUser.value.avatar?.[0]?.avatar ||
@@ -190,6 +202,10 @@ export default defineComponent({
       }
     };
 
+    const goToUpdatePassword = () => {
+      router.push({ name: "update-password-width-token" });
+    };
+
     return {
       dataUser,
       form,
@@ -198,6 +214,7 @@ export default defineComponent({
       defaultAvatar,
       updateUser,
       previewFile,
+      goToUpdatePassword,
     };
   },
 });

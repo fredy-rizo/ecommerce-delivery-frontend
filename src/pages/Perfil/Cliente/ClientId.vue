@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-xl bg-grey-1 flex flex-center">
-    <div>Actualizacion de formulario para usuario admin</div>
+    <!-- <div>Actualizacion de formulario para usuario admin</div> -->
     <q-card
       class="q-pa-xl shadow-3 rounded-borders-xl"
       style="max-width: 800px; width: 100%"

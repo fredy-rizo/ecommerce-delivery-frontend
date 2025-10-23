@@ -1,34 +1,37 @@
 <template>
-  <q-card-section class="text-center">
-    <!-- <img
-      src="~assets/fondologin.jpeg"
-      style="position: fixed; height: 100%; left: 0; bottom: 0; z-index: -1"
-    /> -->
-    <div
-      style="
-        position: fixed;
-        height: 100%;
-        width: 100%;
-        left: 0;
-        bottom: 0;
-        z-index: -1;
-        background: #3faa47;
-      "
-    ></div>
-    <q-btn to="/" unelevated>
-      <img
-        class="q-ma-lg"
-        style="height: 200px; width: 200px"
-        src="~assets/logo_quooka.png"
-      />
-    </q-btn>
-    <h5 class="q-ma-xs text-weight-bolder">Cambiando la contraseña</h5>
-    <div class="row justify-center">
-      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
-        <changePassword :token="$route.params.token" />
+  <div class="flex flex-center bg-grey-1" style="min-height: 100vh">
+    <q-card
+      class="q-pa-xl q-px-lg"
+      style="max-width: 450px; width: 100%; border-radius: 18px"
+    >
+      <div class="text-center q-mb-md">
+        <q-btn to="/" flat no-caps>
+          <img
+            src="~assets/logo_quooka.png"
+            alt="Logo Quooka"
+            style="height: 120px; width: 120px"
+          />
+        </q-btn>
+        <h5 class="text-weight-bold q-mt-sm">Restablecer contraseña</h5>
+        <p class="text-grey-7 q-mb-lg" style="font-size: 14px">
+          Ingresa tu correo
+        </p>
       </div>
-    </div>
-  </q-card-section>
+
+      <changePassword />
+
+      <div class="text-center q-mt-lg">
+        <q-btn
+          to="/login"
+          color="black"
+          flat
+          rounded
+          icon="arrow_back"
+          label="Volver al inicio de sesión"
+        />
+      </div>
+    </q-card>
+  </div>
 </template>
 
 <script>

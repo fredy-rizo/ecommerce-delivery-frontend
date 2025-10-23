@@ -59,9 +59,10 @@ export default {
     const status = ref(null);
     const options = ref([
       { name: "Pagado", value: "1" },
-      { name: "Pendiente de pago", value: "2" },
+      { name: "Pendiente", value: "2" },
       { name: "Cancelado", value: "3" },
-      { name: "Validando pago", value: "4" },
+      { name: "Validando", value: "4" },
+      { name: "Entregado", value: "5" },
     ]);
 
     const changeStatus = async () => {
