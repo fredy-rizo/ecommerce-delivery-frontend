@@ -25,26 +25,6 @@ export default {
     }
     const type = ref(rol);
 
-    // cargar datos de configuracion
-    const getConfigData = () => {
-      const options = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      };
-      fetch(process.env.API_SERVER + "/api/config/app/", options)
-        .then((response) => response.json())
-        .then((response) => {
-          if (!response.status) {
-            localStorage.setItem("config", JSON.stringify({}));
-          }
-          localStorage.setItem("config", JSON.stringify(response.data));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    getConfigData();
-
     return {
       user,
       type,

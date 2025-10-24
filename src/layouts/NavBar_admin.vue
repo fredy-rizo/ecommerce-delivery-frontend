@@ -140,6 +140,15 @@ const linksList = [
     link: "sales",
     roles: [],
   },
+  {
+    title: "Miembros",
+    caption: "Registra miembros al club",
+    icon: "las la-bookmark",
+    link: "miembros",
+    session: true,
+    platfrom: ["web"],
+    roles: ["3", "2"], // codigo del rol permitido para mostrar
+  },
 ];
 
 export default {

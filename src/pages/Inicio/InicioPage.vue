@@ -123,22 +123,6 @@ export default defineComponent({
       dialogmdel.value = false;
     };
 
-    const getConfigData = () => {
-      fetch(process.env.API_SERVER + "/api/config/app", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      })
-        .then((r) => r.json())
-        .then((r) => {
-          localStorage.setItem(
-            "config",
-            JSON.stringify(r.status ? r.data : {})
-          );
-        })
-        .catch(console.log);
-    };
-    getConfigData();
-
     return {
       dataUser,
       dialogmdel,
