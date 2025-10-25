@@ -1,15 +1,20 @@
 <template>
   <div class="row justify-center postuno">
-    <q-card class="q-ms-sm col my-card">
+    <q-card
+      class="q-ms-sm col my-card"
+      @click="openPublication(publication._id)"
+    >
+      <!-- Botón de eliminar (no activa el clic del card gracias al .stop) -->
       <q-btn
         class="delete-btn"
         icon="delete"
-        @click="deletepublication(publication)"
+        @click.stop="deletepublication(publication)"
         v-if="userData.roles.find((itm) => itm.value == 2)"
         round
         unelevated
       />
 
+      <!-- Carrusel (varias imágenes) -->
       <q-carousel
         animated
         v-model="slide"
@@ -25,12 +30,13 @@
       >
         <q-carousel-slide
           v-for="(img, index) in publication.publication"
-          v-bind:key="index"
+          :key="index"
           :name="index + 1"
           :img-src="img.publication"
         />
       </q-carousel>
 
+      <!-- Una sola imagen -->
       <q-carousel
         animated
         v-model="slide"
@@ -38,12 +44,13 @@
       >
         <q-carousel-slide
           v-for="(img, index) in publication.publication"
-          v-bind:key="index"
+          :key="index"
           :name="index + 1"
           :img-src="img.publication"
         />
       </q-carousel>
 
+      <!-- Contenido del card -->
       <q-card-section class="row">
         <div class="col-10">
           <div class="row no-wrap items-center">
@@ -53,7 +60,7 @@
           <div v-if="!showDescription">
             <div
               class="text-caption text-justify descriptionx"
-              @click="showDescription = !showDescription"
+              @click.stop="showDescription = !showDescription"
             >
               <pre
                 class="fontarial"
@@ -68,16 +75,16 @@
             <p
               class="text-weight-bolder"
               v-if="(publication.description || '').length > 80"
-              @click="showDescription = !showDescription"
+              @click.stop="showDescription = !showDescription"
             >
-              Ver mas
+              Ver más
             </p>
           </div>
 
           <div v-else>
             <div
               class="text-caption text-justify"
-              @click="showDescription = !showDescription"
+              @click.stop="showDescription = !showDescription"
             >
               <pre
                 class="fontarial"
@@ -87,7 +94,7 @@
             <p
               class="text-weight-bolder"
               v-if="publication.description.length > 80"
-              @click="showDescription = !showDescription"
+              @click.stop="showDescription = !showDescription"
             >
               Ver menos
             </p>
@@ -95,67 +102,283 @@
         </div>
       </q-card-section>
     </q-card>
+
+    <!-- Modal (detalle de publicación) -->
+    <q-dialog
+      v-model="showModal"
+      persistent
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-card class="corporate-modal q-pa-none">
+        <!-- Encabezado con fondo corporativo -->
+        <div class="modal-header">
+          <div class="header-left">
+            <q-icon name="corporate_fare" size="32px" color="white" />
+            <div>
+              <div class="text-h6 text-white">{{ selectedPost?.title }}</div>
+              <div class="text-caption text-white text-opacity-80">
+                Detalle de publicación
+              </div>
+            </div>
+          </div>
+          <q-btn
+            flat
+            dense
+            round
+            icon="close"
+            color="white"
+            class="close-btn"
+            @click="showModal = false"
+          />
+        </div>
+
+        <!-- Contenido del modal -->
+        <q-card-section class="modal-body">
+          <!-- Imagen o carrusel -->
+          <div class="media-container q-mb-md">
+            <!-- ✅ Carrusel para varias imágenes -->
+            <q-carousel
+              v-if="selectedPost?.publication?.length > 1"
+              animated
+              arrows
+              infinite
+              control-color="primary"
+            >
+              <q-carousel-slide
+                v-for="(img, i) in selectedPost.publication"
+                :key="i"
+                :img-src="img.publication"
+              />
+            </q-carousel>
+
+            <!-- ✅ Imagen única -->
+            <q-img
+              v-else-if="selectedPost?.publication?.[0]?.publication"
+              :src="selectedPost.publication[0].publication"
+              class="single-image"
+              spinner-color="primary"
+            />
+          </div>
+
+          <!-- Descripción -->
+          <div class="description-section">
+            <div class="text-body1 q-mb-sm text-primary text-weight-medium">
+              Descripción
+            </div>
+            <pre
+              class="fontarial text-justify description-text"
+              v-html="searchLinksinText(selectedPost?.description || '')"
+            ></pre>
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <style scoped>
+/* === BOTÓN DE ELIMINAR === */
 .delete-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: linear-gradient(145deg, #ff4b4b, #c0392b);
+  background: linear-gradient(145deg, #d9534f, #c9302c);
   color: white;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
   transition: all 0.2s ease-in-out;
   z-index: 2;
+  border: none;
 }
-
 .delete-btn:hover {
   transform: scale(1.1);
-  background: linear-gradient(145deg, #ff6b6b, #e74c3c);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(145deg, #e74c3c, #d62c1a);
 }
-
 .delete-btn:active {
   transform: scale(0.95);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* === CARD CORPORATIVA === */
 .my-card {
+  position: relative;
   width: 100%;
-  max-width: 500px;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  background-color: #fff;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  max-width: 520px;
+  margin-bottom: 28px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .my-card:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
+/* === CARRUSEL CORPORATIVO === */
+.q-carousel {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.q-carousel__slide img {
+  object-fit: cover;
+}
+
+/* === SECCIÓN DE CONTENIDO === */
+.q-card-section {
+  padding: 18px 20px;
+  background-color: #fdfdfd;
+}
+
+.text-h6 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #003366;
+  letter-spacing: 0.2px;
+}
+
+.text-caption {
+  font-size: 13px;
+  color: #444;
+}
+
+/* === DESCRIPCIÓN === */
+.descriptionx {
+  margin-top: 8px;
+  color: #555;
+  font-size: 13px;
+  line-height: 1.5;
+  border-left: 3px solid #007bff30;
+  padding-left: 10px;
+  transition: color 0.2s;
+}
+.descriptionx:hover {
+  color: #007bff;
+}
+
+.text-weight-bolder {
+  color: #007bff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+.text-weight-bolder:hover {
+  color: #0056b3;
+}
+
+/* === TIPOGRAFÍA GENERAL === */
 .fontarial {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  max-width: 100%;
-  line-height: 1.5;
-  font-size: 12px;
-  color: #222;
+  line-height: 1.6;
+  font-size: 13px;
+  color: #333;
+}
+
+/* === EFECTO DE FOCO CORPORATIVO === */
+.my-card:focus-within {
+  outline: 2px solid #007bff40;
+  box-shadow: 0 0 0 4px #007bff20;
+}
+
+/* === PEQUEÑO INDICADOR VISUAL === */
+.my-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 0%;
+  background: linear-gradient(90deg, #004e92, #007bff);
+  transition: width 0.3s ease;
+}
+.my-card:hover::before {
+  width: 100%;
+}
+
+.corporate-modal {
+  width: 90%;
+  max-width: 900px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fdfdfd;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #004e92, #000428);
+  padding: 18px 24px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.2s;
+}
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.modal-body {
+  padding: 24px 32px;
+  background-color: #ffffff;
+}
+
+.media-container {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.single-image {
+  border-radius: 10px;
+  width: 100%;
+  max-height: 450px;
+  object-fit: cover;
+}
+
+.description-section {
+  margin-top: 16px;
+}
+
+.description-text {
+  background: #f8f9fb;
+  border: 1px solid #e5e8ef;
+  padding: 12px;
+  border-radius: 8px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.modal-footer {
+  background: #fafafa;
+  padding: 16px 24px;
 }
 </style>
 
 <script>
-import "swiper/css";
-import "swiper/css/pagination";
 import { ref, watch } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
-import { Autoplay, Pagination } from "swiper/modules";
 import { validateUser, ValidateSession, getDataUser } from "src/tools/User";
 import { searchLinksinText } from "src/tools/Functions";
 
@@ -176,12 +399,13 @@ export default {
     const $q = useQuasar();
     const slide = ref(1);
     const autoplay = ref(true);
-    const likeHeart = ref(0);
     const userData = ref(getDataUser());
     const publication = ref(
       props.postt || { publication: [], description: "" }
     );
-    const disablelike = ref(false);
+    const showDescription = ref(false);
+    const showModal = ref(false);
+    const selectedPost = ref(null);
 
     watch(
       () => props.postt,
@@ -191,46 +415,42 @@ export default {
       { immediate: true }
     );
 
-    const addPoints = async (idPost, accion) => {
+    // 🔹 Abrir modal y obtener publicación por ID
+    const openPublication = async (id) => {
       try {
-        const sessionUser = validateUser({ rol: 1 });
-        if (!sessionUser) {
+        const sessionUser = getDataUser();
+        const myHeaders = new Headers();
+        myHeaders.append("authorization", `Bearer ${sessionUser.token}`);
+
+        const requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          redirect: "follow",
+        };
+
+        const res = await fetch(
+          `${process.env.API_SERVER}/api/publication/list-id/${id}`,
+          requestOptions
+        );
+
+        const data = await res.json();
+
+        if (!data.status) {
           $q.notify({
             color: "negative",
-            textColor: "white",
-            icon: "las la-exclamation",
-            message: "No autorizado para realizar esta accion.",
+            message: data.message || "No se pudo obtener la publicación.",
           });
-          router.push({ path: "/login" });
           return;
         }
 
-        if (disablelike.value) {
-          return;
-        }
-
-        const options = {
-          method: "POST",
-          headers: {
-            Authorization: "Basic " + sessionUser.token,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ idPost, accion: accion == 0 ? 1 : 2 }),
-        };
-        let res = await fetch(
-          process.env.API_SERVER + "/api/publication/point",
-          options
-        );
-        res = await res.json();
-        disablelike.value = false;
-
-        ValidateSession(res, router);
-        if (res.post) {
-          post.value = res.post;
-        }
+        selectedPost.value = data.data || data.post || data;
+        showModal.value = true;
       } catch (error) {
-        disablelike.value = false;
-        console.log(error);
+        console.log("Error:", error);
+        $q.notify({
+          color: "negative",
+          message: "Error al obtener la publicación.",
+        });
       }
     };
 
@@ -240,8 +460,6 @@ export default {
         if (!sessionUser) {
           $q.notify({
             color: "negative",
-            textColor: "white",
-            icon: "las la-exclamation",
             message: "No autorizado para realizar esta acción.",
           });
           router.push({ path: "/login" });
@@ -251,18 +469,12 @@ export default {
         const myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${sessionUser.token}`);
 
-        const requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          redirect: "follow",
-        };
+        const requestOptions = { method: "POST", headers: myHeaders };
 
         const id = publicationItem && publicationItem._id;
         if (!id) {
           $q.notify({
             color: "negative",
-            textColor: "white",
-            icon: "las la-exclamation",
             message: "Id de publicación inválido.",
           });
           return;
@@ -272,36 +484,21 @@ export default {
         const resp = await fetch(url, requestOptions);
         const data = await resp.json().catch(() => null);
 
-        if (!data) {
-          $q.notify({
-            color: "negative",
-            textColor: "white",
-            icon: "las la-exclamation",
-            message: "Respuesta inválida del servidor.",
-          });
-          return;
-        }
-
         ValidateSession(data, router);
 
-        if (!data.status) {
+        if (!data?.status) {
           $q.notify({
             color: "negative",
-            textColor: "white",
-            icon: "las la-exclamation",
-            message: data.message || "No fue posible eliminar la publicación.",
+            message: data?.message || "No fue posible eliminar la publicación.",
           });
           return;
         }
 
         $q.notify({
           color: "green-4",
-          textColor: "white",
-          icon: "las la-check",
           message: data.message || "Publicación eliminada.",
         });
 
-        // refrescar lista si existe la función
         if (typeof props.resetListPublication === "function") {
           props.resetListPublication();
         }
@@ -309,25 +506,22 @@ export default {
         console.log(err);
         $q.notify({
           color: "negative",
-          textColor: "white",
-          icon: "las la-exclamation",
           message: err.message || err,
         });
       }
     };
 
     return {
-      likeHeart,
       slide,
       autoplay,
       publication,
-      addPoints,
       userData,
-      showDescription: ref(false),
-      disablelike,
+      showDescription,
+      showModal,
+      selectedPost,
+      openPublication,
       deletepublication,
       searchLinksinText,
-      modules: [Pagination, Autoplay],
     };
   },
 };

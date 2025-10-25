@@ -1,46 +1,34 @@
 <template>
   <q-card class="relative-position">
-    <!-- 🔷 Boton desplegable para editar y carrito -->
-    <q-btn-dropdown
-      class="absolute top-0 right-0 bg-green-9 text-white"
-      round
-      dense
-      size="sm"
-      icon="more_vert"
-      style="z-index: 2"
-      no-caps
-      dropdown-icon="none"
-    >
-      <q-list dense bordered separator>
-        <q-item
-          clickable
-          v-if="
-            userData.roles.find(
-              (item) => item.value == 1 || item.value === 3 || item.value === 4
-            )
-          "
-          v-ripple
-          @click="addProductCar(product)"
-        >
-          <q-item-section avatar
-            ><q-icon name="shopping_cart" size="16px"
-          /></q-item-section>
-          <q-item-section class="text-caption">Carrito</q-item-section>
-        </q-item>
+    <q-list dense bordered separator>
+      <q-item
+        clickable
+        v-if="
+          userData.roles.find(
+            (item) => item.value == 1 || item.value === 3 || item.value === 4
+          )
+        "
+        v-ripple
+        @click="addProductCar(product)"
+      >
+        <q-item-section class="text-caption">Agregar</q-item-section>
+        <q-item-section avatar
+          ><q-icon name="shopping_cart" size="16px"
+        /></q-item-section>
+      </q-item>
 
-        <q-item
-          v-if="userData.roles.find((item) => item.value == 2)"
-          clickable
-          v-ripple
-          @click="showDialogeditProduct(product)"
-        >
-          <q-item-section avatar
-            ><q-icon size="16px" name="edit"
-          /></q-item-section>
-          <q-item-section class="text-caption">Editar</q-item-section>
-        </q-item>
-      </q-list>
-    </q-btn-dropdown>
+      <q-item
+        v-if="userData.roles.find((item) => item.value == 2)"
+        clickable
+        v-ripple
+        @click="showDialogeditProduct(product)"
+      >
+        <q-item-section class="text-caption">Editar</q-item-section>
+        <q-item-section avatar
+          ><q-icon size="16px" name="edit"
+        /></q-item-section>
+      </q-item>
+    </q-list>
 
     <!--🔷 Swiper si tiene imagenes -->
     <swiper
@@ -110,25 +98,76 @@
 </template>
 
 <style scoped>
+/* Botones flotantes con estilo corporativo */
 .btnaddCar {
-  right: 10px;
-  top: 10px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btnaddCar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .btnaddEdit {
-  left: 10px;
-  top: 10px;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #ff9800; /* color corporativo secundario */
+  color: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.btnaddEdit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Descripción con estilo corporativo */
 .descriptionx {
-  background: #fafafa;
+  background: #f4f6f8; /* gris muy claro, elegante */
   border-radius: 8px;
-  padding: 6px 10px;
-  word-wrap: break-word; /* corta palabras largas */
-  overflow-wrap: break-word; /* soporte moderno */
-  white-space: normal; /* asegura saltos de línea */
-  max-height: 120px; /* limita altura */
-  overflow-y: auto; /* agrega scroll si es necesario */
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-height: 140px; /* un poco más alto */
+  overflow-y: auto;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: background 0.2s ease;
+}
+
+.descriptionx:hover {
+  background: #e9eff5; /* leve cambio al pasar el mouse */
+}
+
+/* Scroll estilizado para la descripción */
+.descriptionx::-webkit-scrollbar {
+  width: 6px;
+}
+
+.descriptionx::-webkit-scrollbar-track {
+  background: transparent;
 }
 </style>
 
