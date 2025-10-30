@@ -193,7 +193,7 @@ export default defineComponent({
         );
 
         let res = await response.json();
-
+        console.log(res);
         // Validar sesion
         ValidateSession(res, router);
 
@@ -244,8 +244,8 @@ export default defineComponent({
       products.value = [];
       pagination.value.pag = 1;
       const res = await getProduts();
-      if (res && Array.isArray(res.listPrd)) {
-        products.value = [...res.listPrd];
+      if (res && Array.isArray(res.data)) {
+        products.value = [...res.data];
         pagination.value.pags = res.pagination?.pags || 1;
       }
       loading.value = false;

@@ -36,13 +36,6 @@ export default {
     const query = ref("");
     const selectedType = ref(null);
 
-    const types = [
-      { label: "Medicinal", value: "1" },
-      { label: "Lúdico", value: "2" },
-      { label: "Belleza", value: "3" },
-      { label: "Otro", value: "4" },
-    ];
-
     // Watch texto de búsqueda
     watch(query, (newQuery) => {
       if (typeof props.getDataFilter === "function") {
@@ -63,7 +56,7 @@ export default {
     return {
       query,
       selectedType,
-      types,
+      // types,
     };
   },
 };

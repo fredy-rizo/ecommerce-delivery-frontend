@@ -38,19 +38,10 @@ const routes = [
     component: () => import("layouts/MainLayout"),
     children: [
       {
-        path: "",
-        name: "inicio",
-        component: () =>
-          process.env.PLATFROM == 'web' ?
-            import(/* webpackChunkName: "Tienda de productos" */ "pages/store/MainStore")
-            : import(/* webpackChunkName: "INICIO" */ "pages/Inicio/InicioPage")
-        // import(/* webpackChunkName: "INICIO" */ "pages/Inicio/InicioPage"),
-      },
-      {
         path: "posts",
         name: "posts",
         component: () =>
-          import(/* webpackChunkName: "INICIO" */ "pages/Inicio/InicioPage"),
+          import(/* webpackChunkName: "INICIO" */ "pages/store/MainStore.vue"),
       },
       {
         path: "miembros",
@@ -63,6 +54,11 @@ const routes = [
         name: "sales",
         component: () =>
           import(/* webpackChunkName: "EVENTOS" */ "pages/sales/salesPage"),
+      },
+      {
+        path: '/camisetas/:typeShirt',
+        name: 'CamisetasPage',
+        component: () => import('pages/Camisetas/CamisetasPage.vue'),
       },
       {
         path: "client-id",

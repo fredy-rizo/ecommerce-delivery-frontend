@@ -14,7 +14,7 @@
         />
 
         <!-- 🔷 Logo -->
-        <q-btn flat dense round to="/">
+        <q-btn flat dense round to="/store">
           <img
             style="height: 40px; width: auto"
             src="~assets/logo_quooka.png"
@@ -25,33 +25,12 @@
         </q-btn>
 
         <q-space></q-space>
-
-        <!-- 🔷 Navegacion principal -->
-        <q-btn
-          flat
-          round
-          dense
-          icon="newspaper"
-          clickable
-          tag="a"
-          to="posts"
-          v-if="platfrom == 'web'"
-        />
-        <q-btn
-          flat
-          round
-          dense
-          icon="store"
-          clickable
-          tag="a"
-          to="Store"
-          v-if="platfrom == 'web'"
-        />
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above :width="250">
       <q-list>
+        <!-- 🔹 Usuario -->
         <q-item class="q-pa-md">
           <div class="row">
             <q-btn
@@ -73,12 +52,34 @@
           </div>
         </q-item>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <!-- 🔹 Enlaces -->
+        <template v-for="link in essentialLinks" :key="link.title">
+          <!-- Si tiene submenú -->
+          <q-expansion-item
+            v-if="link.children"
+            :icon="link.icon"
+            :label="link.title"
+            :caption="link.caption"
+            expand-separator
+            dense
+          >
+            <q-list dense>
+              <EssentialLink
+                v-for="child in link.children"
+                :key="child.title"
+                v-bind="child"
+                :class="
+                  child.title === 'Oversize' ? 'text-weight-bold text-lg' : ''
+                "
+              />
+            </q-list>
+          </q-expansion-item>
 
+          <!-- Si es un enlace normal -->
+          <EssentialLink v-else v-bind="link" />
+        </template>
+
+        <!-- 🔹 Botones de sesión -->
         <div class="column items-center q-pa-md">
           <q-btn
             push
@@ -123,34 +124,6 @@ import { ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { getDataUser } from "../tools/User";
 
-const linksList = [
-  {
-    title: "Inicio",
-    caption: "Descubre lo que hay para ti",
-    icon: "las la-home",
-    platfrom: ["movil", "web"],
-    link: "inicio",
-    roles: [],
-  },
-  {
-    title: "Ventas",
-    caption: "Mis ventas",
-    icon: "las la-dolly-flatbed",
-    platfrom: ["web"],
-    link: "sales",
-    roles: [],
-  },
-  {
-    title: "Miembros",
-    caption: "Registra miembros al club",
-    icon: "las la-bookmark",
-    link: "miembros",
-    session: true,
-    platfrom: ["web"],
-    roles: ["3", "2"], // codigo del rol permitido para mostrar
-  },
-];
-
 export default {
   name: "MainLayout",
 
@@ -160,51 +133,74 @@ export default {
 
   setup() {
     const leftDrawerOpen = ref(false);
-
     const platfrom = ref(process.env.PLATFROM);
     const dataUser = ref(getDataUser());
+
+    // 🔸 Lista de enlaces principales
+    const linksList = [
+      {
+        title: "Inicio",
+        caption: "Descubre lo que hay para ti",
+        icon: "las la-home",
+        platfrom: ["movil", "web"],
+        link: "posts",
+        roles: [],
+      },
+      {
+        title: "Ventas",
+        caption: "Mis ventas",
+        icon: "las la-dolly-flatbed",
+        platfrom: ["web"],
+        link: "sales",
+        roles: [],
+      },
+      {
+        title: "Miembros",
+        caption: "Registra miembros al club",
+        icon: "las la-bookmark",
+        link: "miembros",
+        session: true,
+        platfrom: ["web"],
+        roles: ["3", "2"],
+      },
+    ];
 
     const closeSession = () => {
       localStorage.clear();
     };
 
+    const essentialLinks = dataUser.value
+      ? linksList.filter((item) => {
+          const platfroms = item.platfrom.filter(
+            (p) => p === process.env.PLATFROM
+          );
+          const roles =
+            item.roles.length === 0
+              ? 2
+              : item.roles.filter((r) => {
+                  for (
+                    let index = 0;
+                    index < dataUser.value.roles.length;
+                    index++
+                  ) {
+                    const element = dataUser.value.roles[index];
+                    if (r === element.value) return true;
+                  }
+                });
+          return platfroms.length > 0 && (roles === 2 || roles.length > 0);
+        })
+      : linksList.filter((item) => {
+          const platfroms = item.platfrom.filter(
+            (p) => p === process.env.PLATFROM
+          );
+          return item.session != true && platfroms.length > 0;
+        });
+
     return {
       platfrom,
       dataUser,
       closeSession,
-      essentialLinks: dataUser.value
-        ? linksList.filter((item) => {
-            let platfroms = item.platfrom.filter((item) => {
-              // validar que este disponible para x plataforma
-              return item == process.env.PLATFROM;
-            });
-            let roles =
-              item.roles.length == 0
-                ? 2
-                : item.roles.filter((item) => {
-                    // validar que este disponible para x plataforma
-                    for (
-                      let index = 0;
-                      index < dataUser.value.roles.length;
-                      index++
-                    ) {
-                      const element = dataUser.value.roles[index];
-                      if (item == element.value) {
-                        return true;
-                      }
-                    }
-                  });
-            return platfroms.length > 0 && (roles == 2 || roles.length > 0); // filtrar por sesion y plataforma
-          })
-        : linksList.filter((item) => {
-            let platfroms = item.platfrom.filter((item) => {
-              // validar que este disponible para x plataforma
-              return item == process.env.PLATFROM;
-            });
-            return (
-              item.session != true && platfroms.length > 0 // filtrar por sesion y plataforma
-            );
-          }),
+      essentialLinks,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;

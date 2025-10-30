@@ -129,55 +129,68 @@
         dense
         hide-bottom
         :rows-per-page-options="[0]"
+        class="q-mt-md bg-white shadow-1 rounded-borders"
+        separator="cell"
       >
         <template v-slot:header="props">
-          <q-tr :props="props">
-            <q-th auto-width />
+          <q-tr class="bg-blue-grey-2 text-weight-bold text-black">
+            <q-th auto-width class="text-center border-right"></q-th>
             <q-th
               v-for="col in props.cols"
               :key="col.name"
-              :props="props"
-              class="text-center"
+              class="text-center text-uppercase border-right"
             >
               {{ col.label }}
             </q-th>
+            <q-th class="text-center">Acción</q-th>
           </q-tr>
         </template>
 
         <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td auto-width>
-              <div class="flex items-center justify-center">
-                <q-btn
-                  size="xs"
-                  flat
-                  dense
-                  round
-                  color="red"
-                  icon="remove"
-                  @click="decreaseCant(props.rowIndex)"
-                  class="q-pa-none"
-                />
-                <q-btn
-                  size="xs"
-                  flat
-                  dense
-                  round
-                  color="green"
-                  icon="add"
-                  @click="increaseCant(props.rowIndex)"
-                  class="q-ml-xs q-pa-none"
-                />
-              </div>
+          <q-tr
+            :props="props"
+            :class="props.rowIndex % 2 === 0 ? 'bg-grey-1' : 'bg-white'"
+            class="hover:bg-grey-2 transition-all"
+          >
+            <q-td auto-width class="text-center border-right">
+              <q-td auto-width class="text-center border-right">
+                <q-td auto-width class="text-center border-right">
+                  <div class="flex items-center justify-center">
+                    <q-btn
+                      flat
+                      dense
+                      round
+                      size="sm"
+                      color="red-7"
+                      icon="remove"
+                      @click="decreaseCant(props.rowIndex)"
+                    />
+                    <span class="q-mx-sm text-weight-medium">{{
+                      props.row.cant
+                    }}</span>
+                    <q-btn
+                      flat
+                      dense
+                      round
+                      size="sm"
+                      color="green-7"
+                      icon="add"
+                      @click="increaseCant(props.rowIndex)"
+                    />
+                  </div>
+                </q-td>
+              </q-td>
             </q-td>
 
             <q-td
               v-for="col in props.cols"
               :key="col.name"
-              :props="props"
-              class="text-center"
+              class="text-center border-right"
             >
-              <div v-if="col.name === 'cant'" class="q-mt-sm">
+              <div
+                v-if="col.name === 'cant'"
+                class="q-mt-sm flex justify-center"
+              >
                 <q-input
                   type="number"
                   dense
@@ -185,14 +198,25 @@
                   min="0"
                   v-model.number="props.row.cant"
                   @update:model-value="updateManualCant(props.rowIndex)"
-                  :input-style="{
-                    color: props.row.cant === 0 ? 'red' : 'inherit',
-                  }"
-                  class="text-center"
-                  style="max-width: 60px; margin: 0 auto"
+                  :input-style="{ textAlign: 'center', width: '60px' }"
+                  :class="props.row.cant === 0 ? 'text-negative' : ''"
                 />
               </div>
-              <span v-else>{{ col.value }}</span>
+
+              <div
+                v-else
+                class="ellipsis text-body2 text-center"
+                style="max-width: 150px; margin: 0 auto"
+              >
+                <q-tooltip
+                  anchor="top middle"
+                  self="bottom middle"
+                  v-if="String(col.value).length > 12"
+                >
+                  {{ col.value }}
+                </q-tooltip>
+                {{ col.value }}
+              </div>
             </q-td>
 
             <q-td auto-width class="text-center">
@@ -209,9 +233,14 @@
         </template>
 
         <template v-slot:bottom>
-          <div class="row justify-between items-center full-width q-pa-md">
-            <div class="text-subtitle1 text-weight-medium">
-              Total: {{ new Intl.NumberFormat().format(total) }}
+          <div
+            class="row justify-between items-center full-width q-pa-md bg-grey-2"
+          >
+            <div class="text-subtitle1 text-weight-bold">
+              Total general:
+              <span class="text-primary">{{
+                new Intl.NumberFormat().format(total)
+              }}</span>
             </div>
           </div>
         </template>
@@ -356,10 +385,16 @@ export default defineComponent({
         item: index,
         _id: element._id,
         titl: element.title,
-        cant: 0,
+        color: Array.isArray(element.colorsSize)
+          ? element.colorsSize[0].label
+          : element.colorsSize?.label || element.colorsSize,
+        size: Array.isArray(element.sizes)
+          ? element.sizes[0].label
+          : element.sizes?.label || element.sizes,
+        typeShirt: element.typeShirt || "—",
+        cant: element.cant || 0,
         pric: element.price,
-        minCant: 0,
-        subTotal: 0,
+        subTotal: (element.price ?? 0) * (element.cant ?? 0),
       }));
 
       products.value = rows;
@@ -472,9 +507,11 @@ export default defineComponent({
 
     const columns = [
       { name: "titl", label: "Nombre", field: "titl" },
+      { name: "color", label: "Color", field: "color" },
+      { name: "size", label: "Talla", field: "size" },
+      { name: "typeShirt", label: "Tipo", field: "typeShirt" },
       { name: "cant", label: "Cantidad", field: "cant" },
       { name: "price", label: "Precio", field: "pric" },
-      // { name: "total", label: "Total", field: "subTotal" },
     ];
 
     const closeDialog = () => {

@@ -159,7 +159,7 @@ export default {
             message: response.msj || "Inicio de sesión exitoso",
           });
 
-          router.push({ name: "inicio" });
+          router.push({ name: "posts" });
         })
         .catch((err) => {
           console.error("Error al procesar respuesta →", err);

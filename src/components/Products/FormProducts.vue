@@ -96,26 +96,78 @@
       <q-select
         rounded
         outlined
+        multiple
+        use-chips
         color="black"
         bg-color="grey-1"
-        v-model="types"
-        :options="listdetailstypes"
-        label="Tipo de producto"
-      >
-      </q-select>
+        v-model="typesColorsSize"
+        :options="listdetailsColorsSize"
+        label="Color de camisa"
+      />
     </div>
 
     <div class="column q-gutter-md q-pa-md">
       <q-select
         rounded
         outlined
+        multiple
+        use-chips
         color="black"
         bg-color="grey-1"
-        v-model="membershipdetail"
-        :options="listdetailsmembership"
-        label="Membresias"
+        v-model="typeSizes"
+        :options="listdetailsSize"
+        label="Talla de camisa"
+      />
+    </div>
+    <div class="column q-gutter-md q-pa-md">
+      <q-select
+        rounded
+        outlined
+        color="black"
+        bg-color="grey-1"
+        v-model="typeTypeShirts"
+        :options="listdetailsTypeShirt"
+        label="Tipo de camisa"
       >
       </q-select>
+    </div>
+
+    <!-- 🔷 Campos de descuento (solo si está editando) -->
+    <div class="column q-gutter-md q-pa-md" v-if="oneProduct">
+      <q-input
+        rounded
+        outlined
+        v-model.number="discount"
+        label="Descuento (%)"
+        type="number"
+        placeholder="0"
+        min="0"
+        max="100"
+        hint="Ingresa el porcentaje de descuento (ej: 10, 20, 50)"
+        stack-label
+      >
+        <template v-slot:append>
+          <q-icon name="percent" />
+        </template>
+      </q-input>
+
+      <q-input
+        v-if="discount > 0"
+        rounded
+        outlined
+        :model-value="priceDiscount"
+        label="Precio con descuento"
+        type="number"
+        readonly
+        filled
+        bg-color="grey-3"
+        hint="Calculado automáticamente"
+        stack-label
+      >
+        <template v-slot:prepend>
+          <q-icon name="attach_money" />
+        </template>
+      </q-input>
     </div>
 
     <div class="row justify-end q-gutter-md q-pa-sm" v-if="messages">
@@ -138,7 +190,7 @@
 
 <script>
 import { useQuasar } from "quasar";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { validateUser, ValidateSession } from "../../tools/User";
 import imagefondo from "../../assets/fondologin.jpeg";
@@ -164,48 +216,112 @@ export default {
     );
     const price = ref(props.oneProduct ? props.oneProduct.price : "");
     const minCant = ref(props.oneProduct ? props.oneProduct.minCant : "");
-    const types = ref(
-      props.oneProduct && props.oneProduct.typeprod
-        ? {
-            label: props.oneProduct.typeprod.value,
-            value: props.oneProduct.typeprod.key,
-          }
-        : { label: "Otro", value: "4" }
+    const discount = ref(
+      props.oneProduct ? props.oneProduct.discount : "Sin descuento"
     );
-    const listdetailstypes = ref([
-      { label: "Medicinal", value: "1" },
-      { label: "Ludico", value: "2" },
-      { label: "Belleza", value: "3" },
-      { label: "Otro", value: "4" },
+
+    const typesColorsSize = ref([]);
+
+    const listdetailsColorsSize = ref([
+      { label: "Blanco", value: "1" },
+      { label: "Negro", value: "2" },
+      { label: "Gris oscuro", value: "3" },
+      { label: "Gris claro", value: "4" },
+      { label: "Azul celeste", value: "5" },
+      { label: "Azul marino", value: "6" },
+      { label: "Azul rey", value: "7" },
+      { label: "Beige", value: "8" },
+      { label: "Cafe claro", value: "9" },
+      { label: "Cafe oscuro", value: "10" },
+      { label: "Verde militar", value: "11" },
+      { label: "Verde bosque", value: "12" },
+      { label: "Verde menta", value: "13" },
+      { label: "Rojo", value: "14" },
+      { label: "Vino", value: "15" },
+      { label: "Rosa pastel", value: "16" },
+      { label: "Fucsia", value: "17" },
+      { label: "Amarillo mostaza", value: "18" },
+      { label: "Amarillo crema", value: "19" },
+      { label: "Naranja", value: "20" },
+      { label: "Lila", value: "21" },
+      { label: "Morado", value: "22" },
+      { label: "Turquesa", value: "23" },
+      { label: "Amarillo", value: "24" },
     ]);
-    const membershipdetail = ref(
-      props.oneProduct && props.oneProduct.membership
-        ? {
-            label: props.oneProduct.membership.value,
-            value: props.oneProduct.membership.key,
-          }
-        : { label: "Todas", value: "1" }
-    );
-    const listdetailsmembership = ref([
-      { label: "Todas", value: "1" },
-      { label: "Premium", value: "2" },
-      { label: "Basico", value: "3" },
+
+    const typeSizes = ref([]);
+
+    const listdetailsSize = ref([
+      { label: "XS", value: "1" },
+      { label: "S", value: "2" },
+      { label: "M", value: "3" },
+      { label: "L", value: "4" },
+      { label: "XL", value: "5" },
+      { label: "XXL/2XL", value: "6" },
+      { label: "XXXL/3XL", value: "7" },
+    ]);
+
+    const typeTypeShirts = ref([]);
+    const listdetailsTypeShirt = ref([
+      { label: "Overside", value: "1" },
+      { label: "CropTop", value: "2" },
+      { label: "Regular Fit", value: "3" },
+      { label: "Semi-Overside", value: "4" },
+      { label: "Hoodie", value: "5" },
     ]);
 
     const messages = ref(false);
     const loading = ref(false);
 
+    // calcular precio automaticamente si hay descuento
+    const priceDiscount = computed(() => {
+      if (!price.value || !discount.value || discount.value <= 0) return 0;
+
+      const discountAmount = (price.value * discount.value) / 100;
+      return Math.round(price.value - discountAmount);
+    });
+
     // Inicializar imagenes
     onMounted(() => {
+      // Imagen
       if (props.oneProduct && props.oneProduct.productImg?.length > 0) {
-        // Mostrar imagen existente
         productImg.value = props.oneProduct.productImg.map((img, idx) => ({
           image: img.productImg || img.image,
           key: idx + 1,
         }));
       } else {
-        // Mostrar imagen por defecto
         productImg.value = [{ image: imagefondo, key: 1 }];
+      }
+
+      // Campos select
+      if (props.oneProduct) {
+        const parseIfString = (data) => {
+          try {
+            return typeof data === "string" ? JSON.parse(data) : data;
+          } catch {
+            return [];
+          }
+        };
+
+        console.log(props.oneProduct.colorsSize);
+
+        const colors = parseIfString(props.oneProduct.colorsSize);
+        const sizes = parseIfString(props.oneProduct.sizes);
+
+        typesColorsSize.value = Array.isArray(colors)
+          ? colors.map((c) => ({ label: c.label, value: c.value }))
+          : [];
+
+        typeSizes.value = Array.isArray(sizes)
+          ? sizes.map((s) => ({ label: s.label, value: s.value }))
+          : [];
+
+        typeTypeShirts.value = props.oneProduct.typeShirt
+          ? {
+              label: props.oneProduct.typeShirt,
+              value: props.oneProduct.typeShirt,
+            }
+          : null;
       }
     });
 
@@ -242,8 +358,42 @@ export default {
       formData.append("description", description.value);
       formData.append("price", price.value);
       formData.append("minCant", minCant.value);
-      formData.append("membership", membershipdetail.value.label);
-      formData.append("typeprod", types.value.label);
+      formData.append(
+        "colorsSize",
+        JSON.stringify(
+          typesColorsSize.value.map((opt) => ({
+            label: opt.label,
+            value: opt.value,
+          }))
+        )
+      );
+
+      formData.append(
+        "sizes",
+        JSON.stringify(
+          typeSizes.value.map((opt) => ({
+            label: opt.label,
+          }))
+        )
+      );
+
+      formData.append(
+        "typeShirt",
+        Array.isArray(typeTypeShirts.value)
+          ? typeTypeShirts.value[0].label
+          : typeTypeShirts.value.label
+      );
+
+      // Solo incluir descuento cuando se actualiza
+      if (props.oneProduct && props.oneProduct._id) {
+        if (discount.value && discount.value > 0) {
+          formData.append("discount", discount.value);
+          formData.append("priceDiscount", priceDiscount.value);
+        } else {
+          formData.append("discount", 0);
+          formData.append("priceDiscount", price.value);
+        }
+      }
 
       if (dataimg.value && dataimg.value.length > 0) {
         for (let file of dataimg.value) {
@@ -351,8 +501,9 @@ export default {
       dataimg.value = null;
       nameProduct.value = null;
       description.value = null;
-      types.value = { label: "Otro", value: "4" };
-      membershipdetail.value = { label: "Todas", value: "1" };
+      typesColorsSize.value = { label: "", value: "" };
+      typeSizes.value = { label: "", value: "" };
+      typeTypeShirts.value = { label: "", value: "" };
     };
 
     return {
@@ -363,10 +514,14 @@ export default {
       description,
       price,
       minCant,
-      types,
-      listdetailstypes,
-      membershipdetail,
-      listdetailsmembership,
+      discount,
+      priceDiscount,
+      typesColorsSize,
+      typeTypeShirts,
+      listdetailsColorsSize,
+      typeSizes,
+      listdetailsSize,
+      listdetailsTypeShirt,
       loadimg,
       addProduct,
       onReset,

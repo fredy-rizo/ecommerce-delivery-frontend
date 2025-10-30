@@ -12,7 +12,7 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-btn flat dense round to="/">
+        <q-btn flat dense round to="/store">
           <img
             style="height: 40px; width: auto"
             src="~assets/logo_quooka.png"
@@ -27,16 +27,6 @@
           clickable
           tag="a"
           to="shoppingcar"
-          v-if="platfrom == 'web'"
-        />
-        <q-btn
-          flat
-          round
-          dense
-          icon="notifications"
-          clickable
-          tag="a"
-          to="posts"
           v-if="platfrom == 'web'"
         />
       </q-toolbar>
@@ -109,27 +99,6 @@ const productstemp = localStorage.getItem("productCar")
   : [];
 const platfrom = ref(process.env.PLATFROM);
 
-const linksList = [
-  {
-    title: "Inicio",
-    caption: "Descubre lo que hay para ti",
-    icon: "las la-home",
-    link: "inicio",
-    session: false,
-    platfrom: ["movil", "web"],
-    roles: [], // codigo del rol permitido para mostrar
-  },
-  {
-    title: "Compras",
-    caption: "Resumen de mis pedidos",
-    icon: "las la-dolly-flatbed",
-    link: "Shoppinglist",
-    session: true,
-    platfrom: ["web"],
-    roles: [], // codigo del rol permitido para mostrar
-  },
-];
-
 export default {
   name: "MainLayout",
   components: {
@@ -140,38 +109,64 @@ export default {
     const opendialog = ref(false);
     const leftDrawerOpen = ref(false);
 
+    const shirtTypes = [
+      {
+        title: "Overside",
+        to: { name: "CamisetasPage", params: { typeShirt: 1 } },
+      },
+      {
+        title: "CropTop",
+        to: { name: "CamisetasPage", params: { typeShirt: 2 } },
+      },
+      {
+        title: "Regular Fit",
+        to: { name: "CamisetasPage", params: { typeShirt: 3 } },
+      },
+      {
+        title: "Semi-Overside",
+        to: { name: "CamisetasPage", params: { typeShirt: 4 } },
+      },
+      {
+        title: "Hoodie",
+        to: { name: "CamisetasPage", params: { typeShirt: 5 } },
+      },
+    ];
+
+    const linksList = [
+      {
+        title: "Inicio",
+        caption: "Descubre lo que hay para ti",
+        icon: "las la-home",
+        link: "posts",
+        session: false,
+        platfrom: ["movil", "web"],
+        roles: [],
+      },
+      {
+        title: "Camisetas",
+        caption: "Categorias",
+        icon: "las la-shopping-bag",
+        platfrom: ["web"],
+        roles: [],
+        children: shirtTypes, // 👈 submenú
+      },
+      {
+        title: "Compras",
+        caption: "Resumen de mis pedidos",
+        icon: "las la-dolly-flatbed",
+        link: "Shoppinglist",
+        session: true,
+        platfrom: ["web"],
+        roles: [],
+      },
+    ];
     const dataUser = ref(getDataUser());
-
-    const duedate = dataUser.value.membership // fecha de vencimiento de la membresia
-      ? new Date(
-          dataUser.value.membership.duedate != ""
-            ? dataUser.value.membership.duedate
-            : "2022-01-01"
-        )
-      : new Date();
-    const actualdate = new Date(); // fecha del dia actual
-    const expire = duedate < actualdate; // validacion de fecha vencimiento para la membresia
-
-    const typemembership =
-      dataUser.value.membership && dataUser.value.membership.membershiptype
-        ? dataUser.value.membership.membershiptype.value
-        : 0; // tipo de membresia
-
-    const payed =
-      dataUser.value.membership && dataUser.value.membership.status
-        ? dataUser.value.membership.status.code
-        : 0; // estado del pago
-
-    const inviteClub =
-      expire || typemembership != 1 || payed != 1 ? true : false; // invitar a formar parte del club, si aun esta vigente o si no es premium
 
     const closeSession = () => {
       localStorage.clear();
     };
 
     return {
-      inviteClub,
-      dataUser,
       essentialLinks: dataUser.value
         ? linksList.filter((item) => {
             let platfroms = item.platfrom.filter((item) => {
