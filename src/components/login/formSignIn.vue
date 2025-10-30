@@ -59,32 +59,27 @@
         />
       </div>
 
-      <div class="row q-col-gutter-md q-mt-md">
-        <div class="col-6">
-          <q-btn
-            outline
-            rounded
-            color="black"
-            label="Crear cuenta"
-            to="registro"
-            class="full-width"
-            no-caps
-            padding="10px 16px"
-          />
-        </div>
-
-        <div class="col-6">
-          <q-btn
-            outline
-            rounded
-            color="black"
-            label="Confirmar cuenta"
-            to="security-code"
-            class="full-width"
-            no-caps
-            padding="10px 16px"
-          />
-        </div>
+      <div class="row justify-center q-gutter-md q-mt-md">
+        <q-btn
+          outline
+          rounded
+          color="black"
+          label="Crear cuenta"
+          to="registro"
+          class="text-body2"
+          no-caps
+          style="min-width: 130px; height: 38px"
+        />
+        <q-btn
+          outline
+          rounded
+          color="black"
+          label="Confirmar cuenta"
+          to="security-code"
+          class="text-body2"
+          no-caps
+          style="min-width: 130px; height: 38px"
+        />
       </div>
 
       <div class="text-center q-mt-md">
