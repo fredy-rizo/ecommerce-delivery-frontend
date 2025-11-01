@@ -38,7 +38,7 @@
         <q-input
           rounded
           outlined
-          color="green-6"
+          color="brown-6"
           bg-color="grey-2"
           label="Correo electrónico"
           v-model="email"
@@ -49,14 +49,14 @@
           ]"
         >
           <template v-slot:prepend>
-            <q-icon name="email" color="green-6" />
+            <q-icon name="email" color="brown-6" />
           </template>
         </q-input>
 
         <q-input
           rounded
           outlined
-          color="green-6"
+          color="brown-6"
           bg-color="grey-1"
           v-model="password"
           label="contraseña"
@@ -70,7 +70,7 @@
           ]"
         >
           <template v-slot:prepend>
-            <q-icon name="key" color="green-6" />
+            <q-icon name="key" color="brown-6" />
           </template>
           <template v-slot:append>
             <q-icon
@@ -84,7 +84,7 @@
         <q-input
           rounded
           outlined
-          color="green-6"
+          color="brown-6"
           bg-color="grey-2"
           label="Código de seguridad"
           v-model="code"
@@ -97,7 +97,7 @@
           ]"
         >
           <template v-slot:prepend>
-            <q-icon name="lock" color="green-6" />
+            <q-icon name="lock" color="brown-6" />
           </template>
         </q-input>
 
@@ -107,7 +107,7 @@
             rounded
             label="Actualizar"
             type="submit"
-            color="green-6"
+            color="brown-6"
             text-color="white"
             class="full-width"
             size="lg"

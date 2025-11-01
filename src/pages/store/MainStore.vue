@@ -79,8 +79,8 @@
         class="bg-white text-dark q-px-md q-py-sm shadow-1 items-center justify-between rounded-t-lg"
       >
         <div class="row items-center no-wrap">
-          <q-icon name="info" color="green-7" size="md" class="q-mr-sm" />
-          <div class="text-subtitle1 text-weight-bold text-green-8">
+          <q-icon name="info" color="blue-8" size="md" class="q-mr-sm" />
+          <div class="text-subtitle1 text-weight-bold text-blue-6">
             {{ oneProduct?.name || "Detalles del producto" }}
           </div>
         </div>

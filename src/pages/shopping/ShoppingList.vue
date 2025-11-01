@@ -140,7 +140,7 @@ export default {
     const columns = [
       { name: "total", label: "Total", field: "total" },
       { name: "status", label: "Estado", field: "status" },
-      { name: "identi", label: "Codigo", field: "_id" },
+      { name: "identi", label: "Codigo", field: "codeSale" },
     ];
 
     const closeDialog = () => {

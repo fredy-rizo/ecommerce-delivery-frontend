@@ -7,7 +7,13 @@
     >
       <div class="column items-center q-mb-lg">
         <q-avatar size="120px" class="q-mb-md">
-          <img :src="previewAvatar || defaultAvatar" alt="avatar" />
+          <img
+            :src="
+              previewAvatar || dataUser?.avatar?.[0]?.avatar || defaultAvatar
+            "
+            @error="(e) => (e.target.src = defaultAvatar)"
+            alt="avatar"
+          />
         </q-avatar>
         <div class="text-center">
           <div class="text-h5 text-primary">{{ dataUser.name }}</div>
@@ -127,7 +133,7 @@ export default defineComponent({
         dataUser.value.avatar?.[0]?.urlAvatar ||
         ""
     );
-    const defaultAvatar = "https://cdn.quasar.dev/img/avatar.png";
+    const defaultAvatar = "https://cdn.quasar.dev/img/boy-avatar.png";
 
     // Precargar valores del localStorage
     const form = ref({

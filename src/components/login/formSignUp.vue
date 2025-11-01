@@ -78,7 +78,7 @@
 
       <div class="q-mt-md">
         <div class="row items-center q-mb-md">
-          <q-toggle v-model="accept" color="warning" />
+          <q-toggle v-model="accept" color="orange-5" />
           <router-link
             to="politicas-page"
             class="text-black q-ml-sm"
@@ -108,7 +108,7 @@
           rounded
           label="Crear Cuenta"
           type="submit"
-          color="warning"
+          color="orange-6"
         />
       </div>
     </q-form>

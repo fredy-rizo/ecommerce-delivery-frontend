@@ -4,7 +4,7 @@
       <q-input
         rounded
         outlined
-        color="green-6"
+        color="brown-6"
         bg-color="grey-2"
         label="Correo electrónico"
         v-model="email"
@@ -15,7 +15,7 @@
         ]"
       >
         <template v-slot:prepend>
-          <q-icon name="email" color="green-6" />
+          <q-icon name="email" color="brown-6" />
         </template>
       </q-input>
 
@@ -25,7 +25,7 @@
           rounded
           label="Enviar codigo"
           type="submit"
-          color="green"
+          color="brown-5"
         />
       </div>
     </q-form>

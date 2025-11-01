@@ -7,7 +7,14 @@
     >
       <div class="column items-center q-mb-lg">
         <q-avatar size="120px" class="q-mb-md">
-          <img :src="previewAvatar || defaultAvatar" alt="avatar" />
+          <img
+            :src="
+              previewAvatar ||
+              defaultAvatar ||
+              'https://cdn.quasar.dev/img/boy-avatar.png'
+            "
+            alt="avatar"
+          />
         </q-avatar>
         <div class="text-center">
           <div class="text-h5 text-primary">{{ dataUser.name }}</div>

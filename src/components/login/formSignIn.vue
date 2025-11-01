@@ -49,7 +49,7 @@
         <q-btn
           unelevated
           rounded
-          color="green-6"
+          color="brown-6"
           text-color="white"
           type="submit"
           label="Iniciar Sesión"
@@ -105,6 +105,8 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
+import { messaging } from "../../firebase/init";
+import { getToken } from "firebase/messaging";
 
 export default {
   setup() {
@@ -153,6 +155,35 @@ export default {
             icon: "cloud_done",
             message: response.msj || "Inicio de sesión exitoso",
           });
+
+          // Registrar token FCM
+          const permission = await Notification.requestPermission();
+          if (permission === "granted") {
+            const tokenFCM = await getToken(messaging, {
+              vapidKey:
+                "BIuq4uj12vyVbY9Nb5T58OoCO68yps6FrB1OEv6X5DD8sl1Pt7H2Ie94ZqYAezPzoyjAMA-ncTnM3lFolK2EKq8",
+            });
+
+            if (tokenFCM) {
+              await fetch(
+                process.env.API_SERVER + "/api/notification/register-token",
+                {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${response.token}`,
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    userId: response.user.id,
+                    fcmToken: tokenFCM,
+                  }),
+                }
+              );
+              console.log("Token FCM registrado en el backend");
+            }
+          } else {
+            console.warn("Permiso no concedido para notificaciones");
+          }
 
           router.push({ name: "posts" });
         })

@@ -20,7 +20,7 @@
             src="~assets/logo_quooka.png"
           />
           <q-toolbar-title class="text-weight-medium">
-            Ecommerce
+            Dashboard Admin
           </q-toolbar-title>
         </q-btn>
 
@@ -156,7 +156,7 @@ export default {
       },
       {
         title: "Miembros",
-        caption: "Registra miembros al club",
+        caption: "Clientes registrados",
         icon: "las la-bookmark",
         link: "miembros",
         session: true,

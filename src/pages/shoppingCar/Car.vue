@@ -333,7 +333,7 @@ export default defineComponent({
     const confirmPay = ref(false);
     const idsale = ref("");
 
-    const changeCant = ref(false); // dialog
+    const changeCant = ref(false);
     const dialogmdel = ref(false);
     const loadingCreateOrder = ref(false);
     const products = ref([]);
@@ -459,7 +459,7 @@ export default defineComponent({
           color: "warning",
           textColor: "white",
           icon: "las la-exclamation",
-          message: `Cantidad minima es 0`,
+          message: `Cantidad minima es 1`,
         });
       }
     };
@@ -527,8 +527,21 @@ export default defineComponent({
           icon: "las la-exclamation",
           message: "No tienes acceso a estas funciones.",
         });
+        router.push({ path: "/login" });
         return;
       }
+
+      if (!sessionUser.id || !sessionUser.token) {
+        $q.notify({
+          color: "negative",
+          textColor: "white",
+          icon: "las la-exclamation",
+          message: "Tu cuenta no es valida. Inicia sesion nuevamente",
+        });
+        router.push({ path: "/login" });
+        return;
+      }
+
       const productstemp = localStorage.getItem("productCar")
         ? JSON.parse(localStorage.getItem("productCar"))
         : [];
@@ -585,11 +598,24 @@ export default defineComponent({
       }
 
       const payload = {
-        client: {
-          ...client.value,
-          typeIdentification: client.value.typeIdentification.name,
-        },
         cantBuy: product.cant,
+        colorsSize: product.colorsSize,
+        sizes: product.sizes,
+        typeShirt: product.typeShirt,
+        client: {
+          userId: client.value.userId,
+          name_client: client.value.name_client,
+          lastName_client: client.value.lastName_client,
+          typeIdentification:
+            client.value.typeIdentification?.name ||
+            client.value.typeIdentification,
+          identification: client.value.identification,
+          phone_number: client.value.phone_number,
+          address: client.value.address,
+          email: client.value.email,
+          zipCode: client.value.zipCode,
+          city: client.value.city,
+        },
       };
 
       let res = await fetch(
@@ -605,13 +631,14 @@ export default defineComponent({
         }
       );
       res = await res.json();
+      console.log(res);
       ValidateSession(res, router);
       if (!res.status) {
         $q.notify({
           color: "negative",
           textColor: "white",
           icon: "las la-exclamation",
-          message: res.message,
+          message: "Error al realizar pago",
         });
         loadingCreateOrder.value = false;
         return;
@@ -647,7 +674,9 @@ export default defineComponent({
       productstemp.splice(rowIndex, 1);
       localStorage.setItem("productCar", JSON.stringify(productstemp));
 
-      loadProducts(); // ← fuerza refresco
+      loadProducts();
+
+      window.dispatchEvent(new Event("cartUpdated"));
 
       $q.notify({
         color: "negative",

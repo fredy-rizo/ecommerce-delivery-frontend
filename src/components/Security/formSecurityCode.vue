@@ -22,8 +22,8 @@
 
       <!-- Encabezado -->
       <div class="text-center q-mb-lg" style="margin-top: 30px">
-        <q-icon name="verified_user" size="80px" color="green-6" />
-        <h5 class="q-mt-md q-mb-none text-weight-bold">Verificar Cuenta</h5>
+        <q-icon name="verified_user" size="80px" color="brown-5" />
+        <h5 class="q-mt-md q-mb-none text-weight-bold">Verificar cuenta</h5>
         <p class="text-grey-7 q-mt-sm">
           Ingresa tu correo y el código de 6 dígitos que te enviamos
         </p>
@@ -36,7 +36,7 @@
         <q-input
           rounded
           outlined
-          color="green-6"
+          color="brown-4"
           bg-color="grey-2"
           label="Correo electrónico"
           v-model="email"
@@ -47,14 +47,14 @@
           ]"
         >
           <template v-slot:prepend>
-            <q-icon name="email" color="green-6" />
+            <q-icon name="email" color="brown-4" />
           </template>
         </q-input>
 
         <q-input
           rounded
           outlined
-          color="green-6"
+          color="brown-4"
           bg-color="grey-2"
           label="Código de seguridad"
           v-model="code"
@@ -67,7 +67,7 @@
           ]"
         >
           <template v-slot:prepend>
-            <q-icon name="lock" color="green-6" />
+            <q-icon name="lock" color="brown-4" />
           </template>
         </q-input>
 
@@ -77,7 +77,7 @@
             rounded
             label="Confirmar Cuenta"
             type="submit"
-            color="green-6"
+            color="brown-6"
             text-color="white"
             class="full-width"
             size="lg"
@@ -94,7 +94,7 @@
             dense
             no-caps
             label="Reenviar"
-            color="green-6"
+            color="brown-4"
             class="q-ml-xs"
             style="font-weight: 600"
             :loading="resending"

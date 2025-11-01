@@ -15,12 +15,12 @@
         dense
         icon="arrow_back"
         color="grey-7"
-        to="/"
+        to="/formulario-page"
         style="position: absolute; top: 16px; left: 16px"
       />
 
       <div class="text-center q-mb-lg" style="margin-top: 30px">
-        <q-icon name="verified_user" size="80px" color="green-6" />
+        <q-icon name="verified_user" size="80px" color="brown-6" />
         <h5 class="q-mt-md q-mb-none text-weight-bold">
           Actualizar contraseña
         </h5>
@@ -35,7 +35,7 @@
         <q-input
           rounded
           outlined
-          color="green-6"
+          color="brown-6"
           bg-color="grey-2"
           label="Correo electrónico"
           v-model="email"
@@ -43,14 +43,14 @@
           disable
         >
           <template v-slot:prepend>
-            <q-icon name="email" color="green-6" />
+            <q-icon name="email" color="brown-6" />
           </template>
         </q-input>
 
         <q-input
           rounded
           outlined
-          color="green-6"
+          color="brown-6"
           bg-color="grey-1"
           v-model="password"
           label="Nueva contraseña"
@@ -58,7 +58,7 @@
           :rules="[(val) => (val && val.length >= 8) || 'Mínimo 8 caracteres']"
         >
           <template v-slot:prepend
-            ><q-icon name="key" color="green-6"
+            ><q-icon name="key" color="brown-6"
           /></template>
           <template v-slot:append>
             <q-icon
@@ -72,7 +72,7 @@
         <q-input
           rounded
           outlined
-          color="green-6"
+          color="brown-6"
           bg-color="grey-1"
           v-model="confirmPassword"
           label="Confirmar nueva contraseña"
@@ -80,7 +80,7 @@
           :rules="[(val) => val === password || 'Las contraseñas no coinciden']"
         >
           <template v-slot:prepend
-            ><q-icon name="key" color="green-6"
+            ><q-icon name="key" color="brown-6"
           /></template>
           <template v-slot:append>
             <q-icon
@@ -97,7 +97,7 @@
             rounded
             label="Actualizar"
             type="submit"
-            color="green-6"
+            color="brown-6"
             text-color="white"
             class="full-width"
             size="lg"

@@ -22,7 +22,6 @@
         class="action-btn"
         @click="openSelectDialog(product)"
       >
-        <!-- <q-tooltip>Agregar al carrito</q-tooltip> -->
       </q-btn>
 
       <q-btn
@@ -36,7 +35,6 @@
         class="action-btn"
         @click="showDialogeditProduct(product)"
       >
-        <!-- <q-tooltip>Editar producto</q-tooltip> -->
       </q-btn>
     </div>
 
@@ -603,6 +601,7 @@ export default {
       showSelectDialog.value = false;
       selectedColor.value = null;
       selectedSize.value = null;
+      window.dispatchEvent(new Event("cartUpdated"));
     };
 
     const addPoints = async (idProduct, accion) => {
